@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://dnfkoufejparh"]
 
-[ext_resource type="Texture2D" uid="uid://bsktnv1mdxykd" path="res://assets/Tileset Cave Final.png" id="1_h2wox"]
-[ext_resource type="Texture2D" uid="uid://cwwo48r82lrym" path="res://assets/Cave_BG.png" id="2_d0esk"]
-[ext_resource type="Texture2D" uid="uid://dd6h25bytytai" path="res://assets/PlayerIdle.png" id="3_thgoc"]
+[ext_resource type="Texture2D" uid="uid://bsktnv1mdxykd" path="res://assets/Sprites/Tileset Cave Final.png" id="1_h2wox"]
+[ext_resource type="Texture2D" uid="uid://cwwo48r82lrym" path="res://assets/Sprites/Cave_BG.png" id="2_d0esk"]
+[ext_resource type="Texture2D" uid="uid://dd6h25bytytai" path="res://assets/Sprites/PlayerIdle.png" id="3_thgoc"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bs4ro"]
 texture = ExtResource("1_h2wox")
