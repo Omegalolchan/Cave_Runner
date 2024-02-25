@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://dnfkoufejparh"]
+[gd_scene load_steps=11 format=3 uid="uid://dnfkoufejparh"]
 
 [ext_resource type="Texture2D" uid="uid://bsktnv1mdxykd" path="res://assets/Sprites/Tileset Cave Final.png" id="1_h2wox"]
 [ext_resource type="Texture2D" uid="uid://cwwo48r82lrym" path="res://assets/Sprites/Cave_BG.png" id="2_d0esk"]
+[ext_resource type="Script" path="res://assets/Scripts/PlayerMovement.gd" id="3_mck1l"]
 [ext_resource type="Texture2D" uid="uid://dd6h25bytytai" path="res://assets/Sprites/PlayerIdle.png" id="3_thgoc"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bs4ro"]
@@ -108,13 +109,17 @@ z_index = -1
 texture = ExtResource("2_d0esk")
 centered = false
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
-position = Vector2(31, 143)
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(31, 128)
+floor_stop_on_slope = false
+floor_constant_speed = true
+script = ExtResource("3_mck1l")
 
-[node name="Player" type="AnimatedSprite2D" parent="CharacterBody2D"]
+[node name="Sprite" type="AnimatedSprite2D" parent="Player"]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_fi5p2")
 animation = &"Idle"
+autoplay = "Idle"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+[node name="HitBox" type="CollisionShape2D" parent="Player"]
 shape = SubResource("RectangleShape2D_sbs3j")
