@@ -114,6 +114,8 @@ position = Vector2(31, 128)
 floor_stop_on_slope = false
 floor_constant_speed = true
 script = ExtResource("3_mck1l")
+jump_max_time = 1.0
+jump_speed = -33.0
 
 [node name="Sprite" type="AnimatedSprite2D" parent="Player"]
 texture_filter = 1
