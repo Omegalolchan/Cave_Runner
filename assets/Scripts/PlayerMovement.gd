@@ -6,26 +6,11 @@ var jump_input : bool
 var is_jumping
 var current_jump_time = 0.0
 
-@export var jump_max_time = .1
+@export var jump_max_time = 1
 @export var jump_speed = -100.0
 @export var gravity_scale : float = 8 
 
 var gravity = 8 * gravity_scale
-
-func _process(delta): # Input gathering
-	direction = Input.get_axis("moveLeft", "moveRight")
-	if(Input.is_action_just_pressed("jump")): JumpInputPress()
-	if(Input.is_action_just_released("jump")): JumpInputRelease()
-	
-	if (jump_input) :
-		current_jump_time -= delta
-	else: 
-		current_jump_time = 0
-	
-	if(current_jump_time <= 0):
-		is_jumping = false
-	
-	return
 
 func JumpInputPress():
 	jump_input = true
@@ -39,8 +24,20 @@ func JumpInputRelease():
 	return
 
 func _physics_process(delta):
+	direction = Input.get_axis("moveLeft", "moveRight")
+	if(Input.is_action_just_pressed("jump")): JumpInputPress()
+	if(Input.is_action_just_released("jump")): JumpInputRelease()
+	
+	if (jump_input) :
+		current_jump_time -= 1
+	else: 
+		current_jump_time = 0
+	
+	if(current_jump_time <= 0):
+		is_jumping = false
+	
 	# Add the gravity.
-	if !is_on_floor():
+	if !is_on_floor() && !is_jumping:
 		velocity.y += gravity * delta
 	
 	if(current_jump_time > 0) :

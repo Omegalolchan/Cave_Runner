@@ -110,12 +110,13 @@ texture = ExtResource("2_d0esk")
 centered = false
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(31, 128)
+position = Vector2(31, 28)
 floor_stop_on_slope = false
 floor_constant_speed = true
 script = ExtResource("3_mck1l")
-jump_max_time = 1.0
-jump_speed = -33.0
+jump_max_time = 30
+jump_speed = -25.0
+gravity_scale = 10.0
 
 [node name="Sprite" type="AnimatedSprite2D" parent="Player"]
 texture_filter = 1
