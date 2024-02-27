@@ -106,6 +106,7 @@ layer_0/tile_data = PackedInt32Array(1245185, 65536, 0, 1310721, 65536, 1, 13762
 [node name="Bg" type="Sprite2D" parent="."]
 modulate = Color(0.580392, 0.580392, 0.580392, 1)
 z_index = -1
+texture_filter = 1
 texture = ExtResource("2_d0esk")
 centered = false
 
