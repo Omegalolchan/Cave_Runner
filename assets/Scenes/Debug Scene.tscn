@@ -89,7 +89,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sbs3j"]
-size = Vector2(8, 16)
+size = Vector2(7, 13)
 
 [node name="Node2D" type="Node2D"]
 
@@ -115,9 +115,6 @@ position = Vector2(31, 28)
 floor_stop_on_slope = false
 floor_constant_speed = true
 script = ExtResource("3_mck1l")
-jump_max_time = 30
-jump_speed = -25.0
-gravity_scale = 10.0
 
 [node name="Sprite" type="AnimatedSprite2D" parent="Player"]
 texture_filter = 1
@@ -126,4 +123,5 @@ animation = &"Idle"
 autoplay = "Idle"
 
 [node name="HitBox" type="CollisionShape2D" parent="Player"]
+position = Vector2(0.5, 1.5)
 shape = SubResource("RectangleShape2D_sbs3j")
