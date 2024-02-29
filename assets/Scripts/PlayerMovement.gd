@@ -18,7 +18,7 @@ var gravity = 8 * gravity_scale
 
 func JumpInputPress():
 	jump_input = true
-	if(is_on_floor()):
+	if on_floor():
 		current_jump_time = jump_max_time
 		is_jumping = true
 	return
@@ -50,22 +50,37 @@ func _physics_process(delta):
 	if(current_jump_time <= 0):
 		is_jumping = false
 
-	if(current_jump_time > 0) :
+	if(is_jumping) :
 		velocity.y = jump_speed
 	#endregion
 	
-	if !is_on_floor():
+	if !on_floor():
 		velocity.y += gravity * delta
+	elif current_jump_time <= 0:
+		velocity.y = 0
 
-	if is_on_floor() && slide_input:
+	if on_floor() && slide_input:
 		is_sliding = true
 		Slide()
 
 	velocity.x = direction * WALK_SPEED
-
-	move_and_slide()
-	var collision = get_last_slide_collision()
+	print(velocity, on_floor())
+	var collision = move_and_collide(velocity * delta, true)
+	if collision:
+		#HANDLE COLISION#
+		pass
+	move_and_collide(velocity * delta)
 	return
+
+func on_floor():
+	var collision = move_and_collide(Vector2(0, 1), true)
+	if collision && collision.get_normal().y < 0:
+		return true
+	return false
+
+func get_collision_type(_collision : KinematicCollision2D):
+	
+	return 
 
 func Slide():
 	# TO DO : Slide 
