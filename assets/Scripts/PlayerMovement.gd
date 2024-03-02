@@ -5,6 +5,7 @@ const FPS_DELTA = 0.016
 var direction : float
 var base_velocity : Vector2
 var added_velocity : Vector2
+var ground_normal : Vector2
 
 var jump_input : bool
 var slide_input : bool
@@ -17,7 +18,8 @@ var current_coyote_time : float
 
 @export var coyote_max_time = 4
 @export var jump_max_time = 20
-@export var jump_speed = -40.0
+@export var jump_speed = -35.0
+@export var slide_accel = 2
 @export var gravity_scale : float = 10
 
 var gravity = (8 * 0.016) * gravity_scale
@@ -63,8 +65,6 @@ func _physics_process(delta):
 	
 	if !on_floor:
 		base_velocity.y += gravity * FPS_DELTA
-	elif velocity.y>0:
-		base_velocity.y = 0
 
 	if on_floor && slide_input:
 		is_sliding = true
@@ -89,6 +89,7 @@ func on_floorUpdate():
 	if collision && collision.get_normal().y < 0:
 		current_coyote_time = coyote_max_time
 		fix_velocity_angle(collision)
+		ground_normal = collision.get_normal()
 		return true
 	else:
 		current_coyote_time -= 1
@@ -99,7 +100,8 @@ func on_floorUpdate():
 	return false
 
 func fix_velocity_angle(_collision : KinematicCollision2D):
-	
+	if velocity.y > 0:
+		base_velocity.y = 0
 	var _velocity = velocity
 	_velocity.y *= -1
 	_velocity = _velocity.rotated(_collision.get_angle())
@@ -108,9 +110,18 @@ func fix_velocity_angle(_collision : KinematicCollision2D):
 	return
 
 func handle_collision(_collision : KinematicCollision2D):
+	#region REMOVING WALL FRICTION
+	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6:
+		velocity.x = 0
+	#endregion
 	
 	return 
 
 func Slide():
-	# TO DO : Slide 
+	if !on_floor: return
+	if ground_normal != up_direction:
+		var velocity_magnitude = sqrt(pow(velocity.x,2) +pow(-velocity.y, 2))
+		added_velocity.x += (velocity_magnitude * slide_accel * FPS_DELTA) * clamp(int(ground_normal.x * 2), -1,1)
+	else:
+		added_velocity.x = 0
 	return

@@ -12,6 +12,7 @@ config_version=5
 
 config/name="Cave_Runner"
 config/features=PackedStringArray("4.2", "Forward Plus")
+run/max_fps=60
 boot_splash/show_image=false
 config/icon="res://icon.svg"
 
