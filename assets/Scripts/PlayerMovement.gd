@@ -3,6 +3,8 @@ extends CharacterBody2D
 const WALK_SPEED = 40.0 / 60
 const FPS_DELTA = 0.016
 var direction : float
+var base_velocity : Vector2
+var added_velocity : Vector2
 
 var jump_input : bool
 var slide_input : bool
@@ -14,7 +16,7 @@ var current_jump_time : float
 var current_coyote_time : float
 
 @export var coyote_max_time = 4
-@export var jump_max_time = 15
+@export var jump_max_time = 20
 @export var jump_speed = -40.0
 @export var gravity_scale : float = 10
 
@@ -56,19 +58,20 @@ func _physics_process(delta):
 		is_jumping = false
 
 	if(is_jumping) :
-		velocity.y = (jump_speed * FPS_DELTA)
+		base_velocity.y = (jump_speed * FPS_DELTA)
 	#endregion
 	
 	if !on_floor:
-		velocity.y += gravity * delta
-	elif !is_jumping:
-		velocity.y = 0
+		base_velocity.y += gravity * FPS_DELTA
+	elif velocity.y>0:
+		base_velocity.y = 0
 
 	if on_floor && slide_input:
 		is_sliding = true
 		Slide()
 
-	velocity.x = direction * WALK_SPEED
+	base_velocity.x = direction * WALK_SPEED
+	velocity = base_velocity + added_velocity
 	var collision = move_and_collide(velocity, true)
 	if collision:
 		handle_collision(collision)
