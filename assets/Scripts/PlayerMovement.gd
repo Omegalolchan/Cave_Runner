@@ -19,7 +19,10 @@ var current_coyote_time : float
 @export var coyote_max_time = 4
 @export var jump_max_time = 20
 @export var jump_speed = -35.0
-@export var slide_accel = 2
+@export var slide_accel = 1
+@export var slide_deccel = 3
+@export var slide_burst_speed = 1.5
+@export var velocity_neutral_deccel = 4
 @export var gravity_scale : float = 10
 
 var gravity = (8 * 0.016) * gravity_scale
@@ -63,14 +66,17 @@ func _physics_process(delta):
 		base_velocity.y = (jump_speed * FPS_DELTA)
 	#endregion
 	
+	base_velocity.x = direction * WALK_SPEED
+	
 	if !on_floor:
 		base_velocity.y += gravity * FPS_DELTA
 
 	if on_floor && slide_input:
 		is_sliding = true
 		Slide()
+	else: is_sliding = false
 
-	base_velocity.x = direction * WALK_SPEED
+	velocity_neutral()
 	velocity = base_velocity + added_velocity
 	var collision = move_and_collide(velocity, true)
 	if collision:
@@ -79,7 +85,7 @@ func _physics_process(delta):
 	
 	on_floor = on_floorUpdate()
 	
-	print(velocity, on_floor ," | ", current_coyote_time)
+	print(base_velocity, " || ", added_velocity)
 	move_and_collide(velocity)
 	return
 
@@ -113,15 +119,37 @@ func handle_collision(_collision : KinematicCollision2D):
 	#region REMOVING WALL FRICTION
 	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6:
 		velocity.x = 0
+		added_velocity.x = 0
 	#endregion
 	
 	return 
 
+func velocity_neutral():
+	if on_floor && !is_sliding:
+		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * FPS_DELTA
+	
+	if sqrt(pow(added_velocity.x, 2)) < 0.1:
+			added_velocity.x = 0
+	return
+
 func Slide():
 	if !on_floor: return
 	if ground_normal != up_direction:
+		if added_velocity.x == 0 && base_velocity.x == 0:
+			added_velocity.x += sign(ground_normal.x) * 0.5
+		
+		if added_velocity.x == 0 && direction != 0 && velocity.x != 0:
+			if direction != sign(ground_normal.x):
+				added_velocity.x += sign(velocity.x) * 0.5
+			if direction == sign(ground_normal.x):
+				added_velocity.x += sign(ground_normal.x) * slide_burst_speed
+		
 		var velocity_magnitude = sqrt(pow(velocity.x,2) +pow(-velocity.y, 2))
-		added_velocity.x += (velocity_magnitude * slide_accel * FPS_DELTA) * clamp(int(ground_normal.x * 2), -1,1)
+		added_velocity.x += (slide_accel * FPS_DELTA) * clamp(int(ground_normal.x * 2), -1,1)
 	else:
-		added_velocity.x = 0
+		if added_velocity.x == 0 :
+			added_velocity.x += sign(velocity.x) * slide_burst_speed / 1.5
+		added_velocity.x += -sign(added_velocity.x) * slide_deccel * FPS_DELTA
+	
+	base_velocity.x = 0
 	return

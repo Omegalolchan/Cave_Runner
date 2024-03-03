@@ -94,8 +94,7 @@ size = Vector2(7, 13)
 [node name="Node2D" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-offset = Vector2(160, 90)
-enabled = false
+anchor_mode = 0
 
 [node name="TileMap" type="TileMap" parent="."]
 texture_filter = 1
@@ -117,7 +116,6 @@ floor_constant_speed = true
 script = ExtResource("3_mck1l")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="Player"]
-texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_fi5p2")
 animation = &"Idle"
 autoplay = "Idle"
