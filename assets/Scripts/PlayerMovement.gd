@@ -20,9 +20,9 @@ var current_coyote_time : float
 @export var jump_max_time = 20
 @export var jump_speed = -35.0
 @export var slide_accel = 1
-@export var slide_deccel = 3
+@export var slide_deccel = 1
 @export var slide_burst_speed = 1.5
-@export var velocity_neutral_deccel = 4
+@export var velocity_neutral_deccel = 2
 @export var gravity_scale : float = 10
 
 var gravity = (8 * 0.016) * gravity_scale
@@ -85,7 +85,7 @@ func _physics_process(delta):
 	
 	on_floor = on_floorUpdate()
 	
-	print(base_velocity, " || ", added_velocity)
+	print(velocity)
 	move_and_collide(velocity)
 	return
 
@@ -125,8 +125,15 @@ func handle_collision(_collision : KinematicCollision2D):
 	return 
 
 func velocity_neutral():
+	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0:
+		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * 2 * FPS_DELTA
+		print("aaa")
+	
 	if on_floor && !is_sliding:
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * FPS_DELTA
+	
+	if !on_floor:
+		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 4 * FPS_DELTA
 	
 	if sqrt(pow(added_velocity.x, 2)) < 0.1:
 			added_velocity.x = 0
@@ -135,7 +142,7 @@ func velocity_neutral():
 func Slide():
 	if !on_floor: return
 	if ground_normal != up_direction:
-		if added_velocity.x == 0 && base_velocity.x == 0:
+		if added_velocity.x == 0 && velocity.x == 0:
 			added_velocity.x += sign(ground_normal.x) * 0.5
 		
 		if added_velocity.x == 0 && direction != 0 && velocity.x != 0:
@@ -145,7 +152,7 @@ func Slide():
 				added_velocity.x += sign(ground_normal.x) * slide_burst_speed
 		
 		var velocity_magnitude = sqrt(pow(velocity.x,2) +pow(-velocity.y, 2))
-		added_velocity.x += (slide_accel * FPS_DELTA) * clamp(int(ground_normal.x * 2), -1,1)
+		added_velocity.x += (slide_accel * sign(ground_normal.x)) * FPS_DELTA
 	else:
 		if added_velocity.x == 0 :
 			added_velocity.x += sign(velocity.x) * slide_burst_speed / 1.5
