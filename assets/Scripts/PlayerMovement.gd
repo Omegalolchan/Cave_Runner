@@ -17,7 +17,7 @@ var on_floor
 var current_jump_time : float
 var current_coyote_time : float
 
-@export var coyote_max_time = 4
+@export var coyote_max_time = 10
 @export var jump_max_time = 20
 @export var jump_speed = -35.0
 @export var slide_accel = 1
@@ -30,10 +30,10 @@ var gravity = (8 * 0.016) * gravity_scale
 
 func JumpInputPress():
 	jump_input = true
-	current_coyote_time = 0
-	if on_floor:
+	if on_floor || current_coyote_time > 0:
 		current_jump_time = jump_max_time
 		is_jumping = true
+	current_coyote_time = 0
 	return
 
 func JumpInputRelease():
@@ -101,9 +101,6 @@ func on_floorUpdate():
 	else:
 		current_coyote_time -= 1
 	
-	if current_coyote_time > 0:
-		return true
-	
 	return false
 
 func fix_velocity_angle(_collision : KinematicCollision2D):
@@ -111,7 +108,10 @@ func fix_velocity_angle(_collision : KinematicCollision2D):
 		base_velocity.y = 0
 	var _velocity = velocity
 	_velocity.y *= -1
-	_velocity = _velocity.rotated(_collision.get_angle())
+	if _collision.get_normal().x > 0:
+		_velocity = _velocity.rotated(-_collision.get_angle())
+	else:
+		_velocity = _velocity.rotated(_collision.get_angle())
 	_velocity.y *= -1
 	velocity = _velocity
 	return
