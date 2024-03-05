@@ -10,6 +10,7 @@ var ground_normal : Vector2
 var jump_input : bool
 var slide_input : bool
 
+var jump_lock
 var is_jumping
 var is_sliding
 var on_floor
@@ -62,7 +63,7 @@ func _physics_process(delta):
 	if(current_jump_time <= 0):
 		is_jumping = false
 
-	if(is_jumping) :
+	if(is_jumping && !jump_lock) :
 		base_velocity.y = (jump_speed * FPS_DELTA)
 	#endregion
 	
@@ -85,7 +86,7 @@ func _physics_process(delta):
 	
 	on_floor = on_floorUpdate()
 	
-	print(velocity)
+	#print(velocity)
 	move_and_collide(velocity)
 	return
 
@@ -125,9 +126,8 @@ func handle_collision(_collision : KinematicCollision2D):
 	return 
 
 func velocity_neutral():
-	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0:
+	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0: #letting the player have more control on his speed#
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * 2 * FPS_DELTA
-		print("aaa")
 	
 	if on_floor && !is_sliding:
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * FPS_DELTA
@@ -156,7 +156,27 @@ func Slide():
 	else:
 		if added_velocity.x == 0 :
 			added_velocity.x += sign(velocity.x) * slide_burst_speed / 1.5
+			jump_lock = true
+			create_timer("jump_lock", FPS_DELTA * 2)
 		added_velocity.x += -sign(added_velocity.x) * slide_deccel * FPS_DELTA
 	
 	base_velocity.x = 0
+	return
+
+func create_timer(name : String, time : float):
+	var t = Timer.new()
+	t.name = name
+	t.one_shot = true
+	t.autostart = true
+	t.wait_time = time
+	add_child(t)
+	var time_end = Callable(on_timer_end) 
+	t.timeout.connect(time_end.bind(name))
+	t.start(time)
+	return
+
+func on_timer_end(name : String):
+	match name:
+		"jump_lock":
+			jump_lock = false
 	return
