@@ -11,6 +11,7 @@ var jump_input : bool
 var slide_input : bool
 
 var jump_lock
+var jump_turn
 var is_jumping
 var is_sliding
 var on_floor
@@ -65,6 +66,8 @@ func _physics_process(delta):
 
 	if(is_jumping && !jump_lock) :
 		base_velocity.y = (jump_speed * FPS_DELTA)
+		if current_jump_time == jump_max_time - 1 && jump_turn:
+			added_velocity.x = modulus(added_velocity.x) * direction
 	#endregion
 	
 	base_velocity.x = direction * WALK_SPEED
@@ -160,7 +163,7 @@ func Slide():
 		if added_velocity.x == 0 :
 			added_velocity.x += sign(velocity.x) * slide_burst_speed / 1.5
 			jump_lock = true
-			create_timer("jump_lock", FPS_DELTA * 2)
+			create_timer("slide_jump_lock", FPS_DELTA * 2)
 		added_velocity.x += -sign(added_velocity.x) * slide_deccel * FPS_DELTA
 	
 	base_velocity.x = 0
@@ -175,7 +178,11 @@ func create_timer(name : String, time : float):
 	t.one_shot = true
 	t.autostart = true
 	t.wait_time = time
-	add_child(t)
+	if find_child(name):
+		t = find_child(name)
+		t.wait_time += time
+	else:
+		add_child(t)
 	var time_end = Callable(on_timer_end) 
 	t.timeout.connect(time_end.bind(name))
 	t.start(time)
@@ -183,6 +190,8 @@ func create_timer(name : String, time : float):
 
 func on_timer_end(name : String):
 	match name:
-		"jump_lock":
+		"slide_jump_lock":
 			jump_lock = false
+		"jump_turn":
+			jump_turn = false
 	return
