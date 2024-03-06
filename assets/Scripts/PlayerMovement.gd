@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 const WALK_SPEED = 40.0 / 60
-const FPS_DELTA = 0.016
+var FPS_DELTA = 0.016
 var direction : float
 var base_velocity : Vector2
 var added_velocity : Vector2
@@ -54,6 +54,7 @@ func GetInput():
 	return
 
 func _physics_process(delta):
+	FPS_DELTA = delta
 	GetInput()
 	#region Jump
 	if (jump_input) :
@@ -133,8 +134,10 @@ func velocity_neutral():
 	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0: #letting the player have more control on his speed#
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * 2 * FPS_DELTA
 	
-	if on_floor && !is_sliding:
+	if on_floor && !is_sliding && direction != sign(added_velocity.x):
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * FPS_DELTA
+	elif on_floor && !is_sliding:
+		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 2* FPS_DELTA
 	
 	if !on_floor:
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 4 * FPS_DELTA
