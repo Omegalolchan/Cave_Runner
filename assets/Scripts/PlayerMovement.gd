@@ -86,7 +86,7 @@ func _physics_process(delta):
 	
 	on_floor = on_floorUpdate()
 	
-	#print(velocity)
+	print(velocity)
 	move_and_collide(velocity)
 	return
 
@@ -106,6 +106,7 @@ func on_floorUpdate():
 func fix_velocity_angle(_collision : KinematicCollision2D):
 	if velocity.y > 0:
 		base_velocity.y = 0
+		added_velocity.y = 0
 	var _velocity = velocity
 	_velocity.y *= -1
 	if _collision.get_normal().x > 0:
@@ -135,24 +136,26 @@ func velocity_neutral():
 	if !on_floor:
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 4 * FPS_DELTA
 	
-	if sqrt(pow(added_velocity.x, 2)) < 0.1:
+	if modulus(added_velocity.x) < 0.1:
 			added_velocity.x = 0
 	return
 
 func Slide():
 	if !on_floor: return
 	if ground_normal != up_direction:
-		if added_velocity.x == 0 && velocity.x == 0:
+		if added_velocity.x == 0 && velocity.x == 0: # small push if player is standing still
 			added_velocity.x += sign(ground_normal.x) * 0.5
 		
-		if added_velocity.x == 0 && direction != 0 && velocity.x != 0:
+		if added_velocity.x == 0 && direction != 0 && velocity.x != 0: # initial boost
 			if direction != sign(ground_normal.x):
 				added_velocity.x += sign(velocity.x) * 0.5
 			if direction == sign(ground_normal.x):
 				added_velocity.x += sign(ground_normal.x) * slide_burst_speed
 		
-		var velocity_magnitude = sqrt(pow(velocity.x,2) +pow(-velocity.y, 2))
 		added_velocity.x += (slide_accel * sign(ground_normal.x)) * FPS_DELTA
+		if is_jumping and current_jump_time == jump_max_time - 1 and velocity.y < 0:
+			added_velocity.y -= modulus(velocity.x) / 1.5
+			added_velocity.x *= 0.25
 	else:
 		if added_velocity.x == 0 :
 			added_velocity.x += sign(velocity.x) * slide_burst_speed / 1.5
@@ -162,6 +165,9 @@ func Slide():
 	
 	base_velocity.x = 0
 	return
+
+func modulus(n : float):
+	return sqrt(pow(n, 2))
 
 func create_timer(name : String, time : float):
 	var t = Timer.new()
