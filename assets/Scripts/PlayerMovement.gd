@@ -90,7 +90,6 @@ func _physics_process(delta):
 	
 	on_floor = on_floorUpdate()
 	
-	print(velocity)
 	move_and_collide(velocity)
 	return
 
