@@ -69,6 +69,7 @@ func _physics_process(delta):
 		base_velocity.y = (jump_speed * FPS_DELTA)
 		if current_jump_time == jump_max_time - 1 && jump_turn:
 			added_velocity.x = modulus(added_velocity.x) * direction
+			jump_turn = false
 	#endregion
 	
 	base_velocity.x = direction * WALK_SPEED
@@ -127,6 +128,9 @@ func handle_collision(_collision : KinematicCollision2D):
 		added_velocity.x = 0
 	#endregion
 	
+	if _collision.get_normal().y < 0:
+		jump_turn = true
+		create_timer("jump_turn", 60)
 	return 
 
 func velocity_neutral():
@@ -194,6 +198,8 @@ func on_timer_end(name : String):
 	match name:
 		"slide_jump_lock":
 			jump_lock = false
+			jump_turn = true
+			create_timer("jump_turn", 60)
 		"jump_turn":
 			jump_turn = false
 	return
