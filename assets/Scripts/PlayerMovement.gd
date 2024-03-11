@@ -32,7 +32,7 @@ var gravity = (8 * 0.016) * gravity_scale
 
 func JumpInputPress():
 	jump_input = true
-	if on_floor || current_coyote_time > 0:
+	if on_floor || on_wall:
 		current_jump_time = jump_max_time
 		is_jumping = true
 	current_coyote_time = 0
@@ -57,6 +57,14 @@ func GetInput():
 func _physics_process(delta):
 	FPS_DELTA = delta
 	GetInput()
+	
+	### Checking Wall collisions, NEEDS TO HAPPEN BEFORE JUMP LOGIC
+	on_wall = false
+	var wall_raycast = raycast(position - Vector2(8,-8), position + Vector2(8,8), true, true)
+	if wall_raycast:
+		if wall_raycast.normal == Vector2(0,0) or wall_raycast.normal == Vector2(-1,0) and !on_floor:
+			on_wall = true
+	
 	#region Jump
 	if (jump_input) :
 		current_jump_time -= 1
@@ -71,6 +79,10 @@ func _physics_process(delta):
 		if current_jump_time == jump_max_time - 1 && jump_turn:
 			added_velocity.x = modulus(added_velocity.x) * direction
 			jump_turn = false
+		if on_wall:
+			position.x += sign(-wall_raycast.position.x + position.x)
+			added_velocity.x += sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed / 4
+			pass
 	#endregion
 	
 	base_velocity.x = direction * WALK_SPEED
@@ -90,9 +102,6 @@ func _physics_process(delta):
 		handle_collision(collision)
 		pass
 	
-	var wall_raycast = raycast(position - Vector2(8,-8), position + Vector2(8,8), true, true)
-	if wall_raycast:
-		print(wall_raycast.normal)
 	
 	on_floor = on_floorUpdate()
 	
@@ -128,7 +137,7 @@ func fix_velocity_angle(_collision : KinematicCollision2D):
 
 func handle_collision(_collision : KinematicCollision2D):
 	#region handling walls
-	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6:
+	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6 && !is_jumping:
 		velocity.x = 0
 		added_velocity.x = 0
 	#endregion
