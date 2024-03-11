@@ -90,9 +90,9 @@ func _physics_process(delta):
 		handle_collision(collision)
 		pass
 	
-	#var wall_raycast = raycast(Vector2(sign(velocity.x) * 16,0))
-	#if wall_raycast:
-		#print(wall_raycast.normal)
+	var wall_raycast = raycast(position - Vector2(8,-8), position + Vector2(8,8), true, true)
+	if wall_raycast:
+		print(wall_raycast.normal)
 	
 	on_floor = on_floorUpdate()
 	
@@ -212,6 +212,7 @@ func on_timer_end(_name : String):
 func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, exclude_self : bool):
 	var space_state = get_world_2d().direct_space_state # getting physics space
 	var query = PhysicsRayQueryParameters2D.create(start_vector, end_vector)
-	query.exclude = [self]
+	if exclude_self: query.exclude = [self]
+	query.hit_from_inside = inside_hit 
 	var result = space_state.intersect_ray(query)
 	return result
