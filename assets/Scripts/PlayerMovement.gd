@@ -15,6 +15,7 @@ var jump_turn
 var is_jumping
 var is_sliding
 var on_floor
+var on_wall
 var current_jump_time : float
 var current_coyote_time : float
 
@@ -89,6 +90,10 @@ func _physics_process(delta):
 		handle_collision(collision)
 		pass
 	
+	#var wall_raycast = raycast(Vector2(sign(velocity.x) * 16,0))
+	#if wall_raycast:
+		#print(wall_raycast.normal)
+	
 	on_floor = on_floorUpdate()
 	
 	move_and_collide(velocity)
@@ -122,12 +127,11 @@ func fix_velocity_angle(_collision : KinematicCollision2D):
 	return
 
 func handle_collision(_collision : KinematicCollision2D):
-	#region REMOVING WALL FRICTION
+	#region handling walls
 	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6:
 		velocity.x = 0
 		added_velocity.x = 0
 	#endregion
-	
 	if _collision.get_normal().y < 0:
 		jump_turn = true
 		create_timer("jump_turn", 60)
@@ -178,24 +182,25 @@ func Slide():
 func modulus(n : float):
 	return sqrt(pow(n, 2))
 
-func create_timer(name : String, time : float):
+func create_timer(_name : String, time : float):
 	var t = Timer.new()
-	t.name = name
+	t.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	t.name = _name
 	t.one_shot = true
 	t.autostart = true
 	t.wait_time = time
-	if find_child(name):
-		t = find_child(name)
+	if find_child(_name):
+		t = find_child(_name)
 		t.wait_time += time
 	else:
 		add_child(t)
 	var time_end = Callable(on_timer_end) 
-	t.timeout.connect(time_end.bind(name))
+	t.timeout.connect(time_end.bind(_name))
 	t.start(time)
 	return
 
-func on_timer_end(name : String):
-	match name:
+func on_timer_end(_name : String):
+	match _name:
 		"slide_jump_lock":
 			jump_lock = false
 			jump_turn = true
@@ -203,3 +208,10 @@ func on_timer_end(name : String):
 		"jump_turn":
 			jump_turn = false
 	return
+
+func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, exclude_self : bool):
+	var space_state = get_world_2d().direct_space_state # getting physics space
+	var query = PhysicsRayQueryParameters2D.create(start_vector, end_vector)
+	query.exclude = [self]
+	var result = space_state.intersect_ray(query)
+	return result
