@@ -63,7 +63,7 @@ func _physics_process(delta):
 	
 	### Checking Wall collisions, NEEDS TO HAPPEN BEFORE JUMP LOGIC
 	on_wall = false
-	var wall_raycast = raycast(position - Vector2(8,-8), position + Vector2(8,8), true, true)
+	var wall_raycast = raycast(position - Vector2(6,-8), position + Vector2(6,8), true, true)
 	if wall_raycast:
 		if wall_raycast.normal == Vector2(0,0) or wall_raycast.normal == Vector2(-1,0) and !on_floor:
 			on_wall = true
@@ -83,8 +83,10 @@ func _physics_process(delta):
 			added_velocity.x = modulus(added_velocity.x) * direction
 			jump_turn = false
 			
-	if on_wall and jump_input:
-		position.x += sign(-wall_raycast.position.x + position.x)
+	if on_wall and jump_input and !on_floor:
+		base_velocity.y = 0
+		if velocity.y > 0: added_velocity.y = 0
+		if current_jump_time == jump_max_time - 1: added_velocity.y -= 30 * FPS_DELTA
 		added_velocity.x += sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed / 2
 	#endregion
 	
@@ -140,7 +142,12 @@ func fix_velocity_angle(_collision : KinematicCollision2D):
 
 func handle_collision(_collision : KinematicCollision2D):
 	#region handling walls
-	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6 && !is_jumping:
+	var same_velocity_aganist_wall = func(v_to_check : float):
+		if sign(_collision.get_position().x - position.x) != sign(v_to_check) && v_to_check == 0:
+			return false
+		return true
+		
+	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6 && !is_jumping && same_velocity_aganist_wall.call(velocity.x):
 		velocity.x = 0
 		added_velocity.x = 0
 	#endregion
@@ -162,7 +169,7 @@ func velocity_neutral():
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 4 * FPS_DELTA
 	
 	if modulus(added_velocity.x) < 0.1:
-			added_velocity.x = 0
+		added_velocity.x = 0
 	
 	return
 
