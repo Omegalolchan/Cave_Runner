@@ -30,22 +30,25 @@ var current_coyote_time : float
 
 var gravity = (8 * 0.016) * gravity_scale
 
-func JumpInputPress():
-	jump_input = true
-	if on_floor || on_wall:
-		current_jump_time = jump_max_time
-		is_jumping = true
-	current_coyote_time = 0
-	return
-
-func JumpInputRelease():
-	jump_input = false
-	return
-
 func GetInput():
+	var JumpInputPress = func():
+		jump_input = true
+		if on_floor:
+			current_jump_time = jump_max_time
+			is_jumping = true
+		current_coyote_time = 0
+		if on_wall:
+			current_jump_time = jump_max_time
+		return
+	
+	var JumpInputRelease = func():
+		jump_input = false
+		return
+	
 	direction = Input.get_axis("moveLeft", "moveRight")
-	if(Input.is_action_just_pressed("jump")): JumpInputPress()
-	if(Input.is_action_just_released("jump")): JumpInputRelease()
+	if(Input.is_action_just_pressed("jump")): JumpInputPress.call()
+	if(Input.is_action_just_released("jump")): JumpInputRelease.call()
+	
 	
 	if Input.is_action_pressed("slide"):
 		slide_input = true 
@@ -79,10 +82,10 @@ func _physics_process(delta):
 		if current_jump_time == jump_max_time - 1 && jump_turn:
 			added_velocity.x = modulus(added_velocity.x) * direction
 			jump_turn = false
-		if on_wall:
-			position.x += sign(-wall_raycast.position.x + position.x)
-			added_velocity.x += sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed / 4
-			pass
+			
+	if on_wall and jump_input:
+		position.x += sign(-wall_raycast.position.x + position.x)
+		added_velocity.x += sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed / 2
 	#endregion
 	
 	base_velocity.x = direction * WALK_SPEED
@@ -153,13 +156,14 @@ func velocity_neutral():
 	if on_floor && !is_sliding && direction != sign(added_velocity.x):
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * FPS_DELTA
 	elif on_floor && !is_sliding:
-		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 2* FPS_DELTA
+		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 2 * FPS_DELTA
 	
 	if !on_floor:
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 4 * FPS_DELTA
 	
 	if modulus(added_velocity.x) < 0.1:
 			added_velocity.x = 0
+	
 	return
 
 func Slide():
