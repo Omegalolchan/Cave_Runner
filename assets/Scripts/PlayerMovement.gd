@@ -12,6 +12,7 @@ var slide_input : bool
 
 var jump_lock
 var jump_turn
+var is_walljumping
 var is_jumping
 var is_sliding
 var on_floor
@@ -37,8 +38,9 @@ func GetInput():
 			current_jump_time = jump_max_time
 			is_jumping = true
 		current_coyote_time = 0
-		if on_wall:
-			current_jump_time = jump_max_time
+		if on_wall and !on_floor:
+			stop_timer("wall_jump")
+			is_walljumping = true
 		return
 	
 	var JumpInputRelease = func():
@@ -61,7 +63,7 @@ func _physics_process(delta):
 	FPS_DELTA = delta
 	GetInput()
 	
-	### Checking Wall collisions, NEEDS TO HAPPEN BEFORE JUMP LOGIC
+	### Checking Wall collisions
 	on_wall = false
 	var wall_raycast = raycast(position - Vector2(6,-8), position + Vector2(6,8), true, true)
 	if wall_raycast:
@@ -83,11 +85,17 @@ func _physics_process(delta):
 			added_velocity.x = modulus(added_velocity.x) * direction
 			jump_turn = false
 			
-	if on_wall and jump_input and !on_floor:
+	if is_walljumping and !on_floor and on_wall and !is_jumping:
 		base_velocity.y = 0
 		if velocity.y > 0: added_velocity.y = 0
-		if current_jump_time == jump_max_time - 1: added_velocity.y -= 30 * FPS_DELTA
-		added_velocity.x += sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed / 2
+		if get_node_or_null("wall_jump") != null:
+			var wall_jump_timer = get_timer("wall_jump")
+			if wall_jump_timer.get('time_passed') == 0:
+				added_velocity.y -= 60 * FPS_DELTA
+				added_velocity.x += sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed
+		if get_node_or_null("wall_jump") == null:
+			create_timer("wall_jump", 5 * FPS_DELTA)
+		
 	#endregion
 	
 	base_velocity.x = direction * WALK_SPEED
@@ -147,9 +155,10 @@ func handle_collision(_collision : KinematicCollision2D):
 			return false
 		return true
 		
-	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6 && !is_jumping && same_velocity_aganist_wall.call(velocity.x):
+	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6 && same_velocity_aganist_wall.call(velocity.x):
 		velocity.x = 0
-		added_velocity.x = 0
+		if !same_velocity_aganist_wall.call(added_velocity.x):
+			pass
 	#endregion
 	if _collision.get_normal().y < 0:
 		jump_turn = true
@@ -157,7 +166,7 @@ func handle_collision(_collision : KinematicCollision2D):
 	return 
 
 func velocity_neutral():
-	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0: #letting the player have more control on his speed#
+	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0 && !is_walljumping: #letting the player have more control on his speed#
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * 2 * FPS_DELTA
 	
 	if on_floor && !is_sliding && direction != sign(added_velocity.x):
@@ -209,9 +218,10 @@ func create_timer(_name : String, time : float):
 	t.one_shot = true
 	t.autostart = true
 	t.wait_time = time
-	if find_child(_name):
-		t = find_child(_name)
+	if get_node_or_null(_name) != null:
+		t = get_node(_name)
 		t.wait_time += time
+		return
 	else:
 		add_child(t)
 	var time_end = Callable(on_timer_end) 
@@ -227,7 +237,30 @@ func on_timer_end(_name : String):
 			create_timer("jump_turn", 60)
 		"jump_turn":
 			jump_turn = false
+		"wall_jump":
+			is_walljumping = false
 	return
+
+func stop_timer(_name : String):
+	var timer : Timer
+	if get_node_or_null(_name) ==  null:
+		return
+	timer = get_node(_name)
+	timer.stop()
+	return
+
+func get_timer(_name : String): # Returns the time left/passed of given Timer
+	var value = {
+		"time_left": 0,
+		"time_passed": 0
+	}
+	if get_node_or_null(_name) == null:
+		return value
+	var timer : Timer
+	timer = get_node(_name) as Timer
+	value.time_left = timer.time_left
+	value.time_passed = timer.wait_time - timer.time_left
+	return value
 
 func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, exclude_self : bool):
 	var space_state = get_world_2d().direct_space_state # getting physics space
