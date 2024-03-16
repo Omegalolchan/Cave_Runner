@@ -39,7 +39,6 @@ func GetInput():
 			is_jumping = true
 		current_coyote_time = 0
 		if on_wall and !on_floor:
-			stop_timer("wall_jump")
 			is_walljumping = true
 		return
 	
@@ -62,7 +61,7 @@ func GetInput():
 func _physics_process(delta):
 	FPS_DELTA = delta
 	GetInput()
-	
+	#print(get_tree_string_pretty())
 	### Checking Wall collisions
 	on_wall = false
 	var wall_raycast = raycast(position - Vector2(6,-8), position + Vector2(6,8), true, true)
@@ -88,20 +87,23 @@ func _physics_process(delta):
 	if is_walljumping and !on_floor and on_wall and !is_jumping:
 		base_velocity.y = 0
 		if velocity.y > 0: added_velocity.y = 0
-		if get_node_or_null("wall_jump") != null:
-			var wall_jump_timer = get_timer("wall_jump")
-			if wall_jump_timer.get('time_passed') == 0:
-				added_velocity.y -= 60 * FPS_DELTA
-				added_velocity.x += sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed
-		if get_node_or_null("wall_jump") == null:
-			create_timer("wall_jump", 5 * FPS_DELTA)
+		if get_timer("wall_jump").get('exists') == false:
+			create_timer("wall_jump", 20 * FPS_DELTA)
+			added_velocity.y -= 30 * FPS_DELTA
+			added_velocity.x = sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed * 2
+		
 		
 	#endregion
 	
 	base_velocity.x = direction * WALK_SPEED
 	
+	#if is_walljumping and direction != sign(added_velocity.x) and direction != 0 and get_timer("wall_jump").get('exists'):
+		#base_velocity.x *= get_timer("wall_jump").get('percentage_passed') / 100
+	
 	if !on_floor:
 		base_velocity.y += gravity * FPS_DELTA
+		if added_velocity.x != 0:
+			base_velocity.x *= 0.5
 
 	if on_floor && slide_input:
 		is_sliding = true
@@ -157,16 +159,15 @@ func handle_collision(_collision : KinematicCollision2D):
 		
 	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6 && same_velocity_aganist_wall.call(velocity.x):
 		velocity.x = 0
-		if !same_velocity_aganist_wall.call(added_velocity.x):
-			pass
+		added_velocity.x = 0
 	#endregion
 	if _collision.get_normal().y < 0:
 		jump_turn = true
-		create_timer("jump_turn", 60)
+		create_timer("jump_turn", 60 )
 	return 
 
 func velocity_neutral():
-	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0 && !is_walljumping: #letting the player have more control on his speed#
+	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0 && on_floor: #letting the player have more control on his speed#
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * 2 * FPS_DELTA
 	
 	if on_floor && !is_sliding && direction != sign(added_velocity.x):
@@ -176,6 +177,9 @@ func velocity_neutral():
 	
 	if !on_floor:
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 4 * FPS_DELTA
+	
+	if !on_floor and direction != sign(added_velocity.x) && direction != 0:
+		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel / 2 * FPS_DELTA
 	
 	if modulus(added_velocity.x) < 0.1:
 		added_velocity.x = 0
@@ -218,8 +222,8 @@ func create_timer(_name : String, time : float):
 	t.one_shot = true
 	t.autostart = true
 	t.wait_time = time
-	if get_node_or_null(_name) != null:
-		t = get_node(_name)
+	if get_node_or_null("../Player/"+_name):
+		t = get_node("../Player/"+_name)
 		t.wait_time += time
 		return
 	else:
@@ -230,6 +234,7 @@ func create_timer(_name : String, time : float):
 	return
 
 func on_timer_end(_name : String):
+	get_node("../Player/"+_name).queue_free()
 	match _name:
 		"slide_jump_lock":
 			jump_lock = false
@@ -243,23 +248,28 @@ func on_timer_end(_name : String):
 
 func stop_timer(_name : String):
 	var timer : Timer
-	if get_node_or_null(_name) ==  null:
+	if get_node_or_null("../Player/"+_name) ==  null:
 		return
-	timer = get_node(_name)
+	timer = get_node("../Player/"+_name)
 	timer.stop()
+	timer.queue_free()
 	return
 
 func get_timer(_name : String): # Returns the time left/passed of given Timer
 	var value = {
 		"time_left": 0,
-		"time_passed": 0
+		"time_passed": 0,
+		"percentage_passed": 0,
+		"exists": false
 	}
-	if get_node_or_null(_name) == null:
+	if get_node_or_null("../Player/"+_name) == null:
 		return value
 	var timer : Timer
-	timer = get_node(_name) as Timer
+	timer = get_node("../Player/"+_name) as Timer
 	value.time_left = timer.time_left
 	value.time_passed = timer.wait_time - timer.time_left
+	value.percentage_passed = (value.time_passed / timer.wait_time) * 100
+	value.exists = true
 	return value
 
 func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, exclude_self : bool):
