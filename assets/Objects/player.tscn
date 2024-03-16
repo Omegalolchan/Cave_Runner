@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3 uid="uid://cv2005kajth2r"]
+
+[ext_resource type="Script" path="res://assets/Scripts/PlayerMovement.gd" id="1_geve8"]
+[ext_resource type="Texture2D" uid="uid://dd6h25bytytai" path="res://assets/Sprites/PlayerIdle.png" id="2_lp3gv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_414hq"]
+atlas = ExtResource("2_lp3gv")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ida2"]
+atlas = ExtResource("2_lp3gv")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fi5p2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_414hq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ida2")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 2.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sbs3j"]
+size = Vector2(7, 13)
+
+[node name="Player" type="CharacterBody2D"]
+floor_stop_on_slope = false
+floor_constant_speed = true
+script = ExtResource("1_geve8")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_fi5p2")
+animation = &"Idle"
+autoplay = "Idle"
+
+[node name="HitBox" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, 1.5)
+shape = SubResource("RectangleShape2D_sbs3j")
