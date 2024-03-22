@@ -1,0 +1,34 @@
+[gd_scene load_steps=4 format=3 uid="uid://ct5jcfjif0bnf"]
+
+[ext_resource type="Script" path="res://assets/Scripts/Debug.gd" id="1_ylq8k"]
+
+[sub_resource type="SystemFont" id="SystemFont_gvsyw"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_i7r17"]
+font = SubResource("SystemFont_gvsyw")
+font_size = 10
+font_color = Color(0.305882, 1, 1, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ylq8k")
+
+[node name="Label" type="Label" parent="."]
+z_index = 10
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "PLACEHOLDER"
+label_settings = SubResource("LabelSettings_i7r17")
+horizontal_alignment = 1
+vertical_alignment = 1
