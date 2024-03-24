@@ -2,19 +2,18 @@ extends Control
 
 var placeholder_text = "-"
 var active = false
+@onready var external_script_node = $Node
 
 func _ready():
 	$Label.text = placeholder_text
 	enable_disable_UI()
 	return
 
-func _process(delta):
+func _input(event):
 	if Input.is_action_just_pressed("debug"):
 		active = !active
 		enable_disable_UI()
-	return
-
-func _input(event):
+	
 	if !active:
 		return
 	
@@ -51,7 +50,7 @@ func run_command(command_line : String):
 	var command_array = command_line.split(" ", false)
 	match command_array[0]:
 		'run':
-			print("atempting to run external script...")
+			run_external_script()
 		_:
 			print("this commmand does not exist")
 	return
@@ -67,3 +66,22 @@ func enable_disable_UI():
 	else:
 		$Label.text = ""
 		visible = false
+
+func run_external_script():
+	###################################################
+	#external script needs to be one dir before res://
+	#name = debug_cr_script.gd
+	#extends from node
+	#and have run()
+	####################################################
+	
+	var path = ProjectSettings.globalize_path('res://')
+	var b = FileAccess.file_exists(path+'../debug_cr_script.gd')
+	if !b:
+		return
+	
+	var ex_script : Script = ResourceLoader.load(path+'../debug_cr_script.gd')
+	external_script_node.set_script(ex_script)
+	external_script_node.run()
+	
+	return
