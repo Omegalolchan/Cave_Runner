@@ -1,14 +1,14 @@
 extends Node
+class_name ResolutionHandler
 
-var scale_factor : int = 6
+static var scale_factor : int = 6
+static var window : Window
 
 func _ready():
-	get_viewport().size = Vector2i(320, 180) * scale_factor
-	pass
-
-func _process(_delta):
-	pass
+	window = get_window()
+	window.size_changed.connect(change_resolution)
 
 func change_resolution():
-	get_viewport().size = Vector2i(320, 180) * scale_factor
+	#window.size = Vector2i(320, 180) * scale_factor
+	DisplayServer.window_set_size(window.size,0)
 	return

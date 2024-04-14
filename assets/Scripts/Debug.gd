@@ -4,6 +4,7 @@ var placeholder_text = "-"
 var active = false
 @onready var external_script_node = $Node
 
+
 func _ready():
 	$Label.text = placeholder_text
 	enable_disable_UI()
@@ -51,6 +52,9 @@ func run_command(command_line : String):
 	match command_array[0]:
 		'run':
 			run_external_script()
+		'res':
+			size = Vector2i(int(command_array[1]), int(command_array[2]))
+			ResolutionHandler.window.size = size
 		_:
 			print("this commmand does not exist")
 	return
@@ -69,12 +73,12 @@ func enable_disable_UI():
 
 func run_external_script():
 	###################################################
-	#external script needs to be one dir before res://
+	#external script needs to be one dir before res
 	#name = debug_cr_script.gd
 	#extends from node
 	#and have run()
 	####################################################
-	
+
 	var path = ProjectSettings.globalize_path('res://')
 	var b = FileAccess.file_exists(path+'../debug_cr_script.gd')
 	if !b:

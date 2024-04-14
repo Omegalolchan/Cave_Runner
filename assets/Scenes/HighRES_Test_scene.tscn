@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bhhc33rua8dq"]
+[gd_scene load_steps=5 format=3 uid="uid://cuvk28t0lwv52"]
 
 [ext_resource type="Script" path="res://assets/Scripts/ResolutionHandler.gd" id="1_ankvq"]
 [ext_resource type="PackedScene" uid="uid://dnfkoufejparh" path="res://assets/Scenes/Debug Scene.tscn" id="1_gyqj3"]
@@ -10,6 +10,8 @@ font = SubResource("SystemFont_s2fcn")
 font_size = 106
 
 [node name="Node" type="Node"]
+
+[node name="ResolutionHandler" type="Node" parent="."]
 script = ExtResource("1_ankvq")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
