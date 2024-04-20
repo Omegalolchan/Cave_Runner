@@ -1,6 +1,4 @@
----
-
-#Cave Runner
+# Cave Runner
 
 **Descrição:**
 
@@ -11,7 +9,8 @@ Cave Runner é um emocionante jogo de plataforma de precisão onde os jogadores 
 1. **Controles:**
    - Setas direcionais para mover o personagem.
    - Tecla 'C' para pular.
-   - Seta para baixo para deslizar.
+   - Tecla 'S' para deslizar.
+   - (Adicione outros controles conforme necessário)
 
 2. **Objetivo:**
    - Navegue através dos níveis da caverna, superando obstáculos mortais.
@@ -28,7 +27,7 @@ Cave Runner é um emocionante jogo de plataforma de precisão onde os jogadores 
 1. Acesse a página de [Releases](https://github.com/Omegalolchan/Cave_Runner/releases) no GitHub.
 2. Baixe a versão mais recente do jogo em formato de arquivo compactado (ZIP).
 3. Extraia os arquivos do jogo para a pasta de sua escolha em seu dispositivo.
-4. Execute o executável "Cave Runner" do jogo para iniciar a aventura na Boca do Diabo!
+4. Execute o arquivo executável do jogo para iniciar a aventura na Boca do Diabo!
 
 **Suporte:**
 
@@ -37,5 +36,3 @@ Cave Runner é um emocionante jogo de plataforma de precisão onde os jogadores 
 **Agradecimentos:**
 
 Agradecemos por jogar Cave Runner e esperamos que você desfrute desta emocionante aventura!
-
---- 
