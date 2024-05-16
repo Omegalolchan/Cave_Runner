@@ -84,8 +84,13 @@ func run_external_script():
 	if !b:
 		return
 	
-	var ex_script : Script = ResourceLoader.load(path+'../debug_cr_script.gd')
+	var file = FileAccess.open(path+'../debug_cr_script.gd', FileAccess.READ)
+	var ex_script = GDScript.new()
+	ex_script.source_code = file.get_as_text()
+	ex_script.reload()
+	file.close()
 	external_script_node.set_script(ex_script)
 	external_script_node.run()
-	
+	external_script_node.set_script(null)
+
 	return
