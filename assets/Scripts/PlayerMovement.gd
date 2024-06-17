@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal var_to_anim(ground : bool, speed : Vector2, jump : bool, wall_jump : bool, walled : bool, slide : bool)
+
 const WALK_SPEED = 40.0 / 60
 var FPS_DELTA = 0.016
 var direction : float
@@ -12,7 +14,7 @@ var slide_input : bool
 
 var jump_lock
 var jump_turn
-var is_walljumping
+var is_walljumping : bool
 var is_jumping
 var is_sliding
 var on_floor
@@ -20,14 +22,14 @@ var on_wall
 var current_jump_time : float
 var current_coyote_time : float
 
-@export var coyote_max_time = 10
-@export var jump_max_time = 20
-@export var jump_speed = -35.0
-@export var slide_accel = 1
-@export var slide_deccel = 1
-@export var slide_burst_speed = 1.5
-@export var velocity_neutral_deccel = 2
-@export var gravity_scale : float = 10
+var coyote_max_time = 10
+var jump_max_time = 20
+var jump_speed = -35.0
+var slide_accel = 1
+var slide_deccel = 1
+var slide_burst_speed = 1.5
+var velocity_neutral_deccel = 2
+var gravity_scale : float = 10
 
 var gravity = (8 * 0.016) * gravity_scale
 
@@ -121,6 +123,7 @@ func _physics_process(delta):
 	on_floor = on_floorUpdate()
 	
 	move_and_collide(velocity)
+	var_to_anim.emit(on_floor , velocity, is_jumping, is_walljumping, on_wall, is_sliding)
 	return
 
 func on_floorUpdate():
