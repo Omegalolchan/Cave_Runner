@@ -91,7 +91,6 @@ func run_external_script():
 	file.close()
 	external_script_node.set_script(ex_script)
 	external_script_node.run()
-	external_script_node.free()
-	#external_script_node.set_script(null)
+	external_script_node.set_script(null)
 
 	return

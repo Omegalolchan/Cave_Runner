@@ -1,4 +1,5 @@
 extends CharacterBody2D
+class_name Player
 
 signal var_to_anim(ground : bool, speed : Vector2, jump : bool, wall_jump : bool, walled : bool, slide : bool)
 
@@ -11,7 +12,7 @@ var ground_normal : Vector2
 
 var jump_input : bool
 var slide_input : bool
-var hook_input : bool
+#var hook_input : bool
 
 var jump_lock
 var jump_turn
@@ -60,16 +61,16 @@ func GetInput():
 	else:
 		slide_input = false
 
-	hook_input = Input.is_action_pressed("hook")
-	if hook_input:
-		hook()
+	#hook_input = Input.is_action_pressed("hook")
+	#if hook_input:
+	#	hook()
 
 	return
 
 func hook():
-	var hook_dir = Vector2(1,0)
-	hook_angle = hook_dir.angle_to(get_local_mouse_position())
-	queue_redraw()
+	#var hook_dir = Vector2(1,0)
+	#hook_angle = hook_dir.angle_to(get_local_mouse_position())
+	#queue_redraw()
 
 	var d = Vector2(cos(hook_angle),sin(hook_angle))
 	if raycast(position, position + d * 64, true, true):
@@ -77,10 +78,10 @@ func hook():
 		added_velocity.x += d.x * FPS_DELTA * 3
 		if added_velocity.x <= 0.1: added_velocity.x = 0.15 * sign(d.x)
 
-func _draw():
-	draw_line(Vector2(0,0), Vector2(32, 0).rotated(hook_angle), Color.GREEN, 1, false)
-	var d = Vector2(cos(hook_angle),sin(hook_angle)) * 64
-	draw_circle(d, 4, Color.DARK_RED)
+#func _draw():
+#	draw_line(Vector2(0,0), Vector2(32, 0).rotated(hook_angle), Color.GREEN, 1, false)
+#	var d = Vector2(cos(hook_angle),sin(hook_angle)) * 64
+#	draw_circle(d, 4, Color.DARK_RED)
 
 func _physics_process(delta):
 	FPS_DELTA = delta

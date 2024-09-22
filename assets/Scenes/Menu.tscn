@@ -11,6 +11,7 @@ anchors_preset = 0
 script = ExtResource("1_7rv4w")
 
 [node name="ButtonStart" type="Button" parent="."]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 400.0
 offset_right = 205.0
@@ -31,6 +32,7 @@ text = "Start"
 alignment = 0
 
 [node name="ButtonOptions" type="Button" parent="."]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 500.0
 offset_right = 315.0
@@ -51,6 +53,7 @@ text = "Options"
 alignment = 0
 
 [node name="ButtonQuit" type="Button" parent="."]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 600.0
 offset_right = 204.0

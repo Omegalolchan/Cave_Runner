@@ -35,6 +35,8 @@ func _on_player_var_to_anim(ground:bool, speed:Vector2, jump:bool, wall_jump:boo
 			play_anim(calc_slide_angle(speed))
 	else:
 		if speed.y > 0 and hold[0] == "":
+			if frame == 2 and animation == 'FALL':
+				return
 			play_anim(anim_to_play.FALL)
 			return
 		if speed.y <= 0 and jump and hold[0] == "" or hold[0] == "jump":

@@ -29,11 +29,12 @@ func _ready():
 
 
 func start_button():
-	print("start")
+	for i in get_children().size():
+		get_children()[i].queue_free()
+	get_tree().change_scene_to_packed(load('res://assets/Scenes/HighResDebugScene.tscn'))
 	return
 
 func credits_button():
-	print("credits")
 	change_panel(menu1, menu_credit, menu_credit[1])
 	return
 
