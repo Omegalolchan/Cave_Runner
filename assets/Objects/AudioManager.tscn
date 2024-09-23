@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://dwsxt7rxvwn2n"]
+
+[ext_resource type="Script" path="res://assets/Scripts/AudioManager.gd" id="1_l80v7"]
+[ext_resource type="AudioStream" uid="uid://ce08qwdacj8gc" path="res://assets/Audio/OST/IntoTheDarkNESS.mp3" id="1_ve1xq"]
+[ext_resource type="AudioStream" uid="uid://bhs607ciwjnd1" path="res://assets/Audio/SFX/pulobizonho.wav" id="2_l8bes"]
+[ext_resource type="AudioStream" uid="uid://qrc8uk6sghlm" path="res://assets/Audio/SFX/Passos_Var1.mp3" id="4_2ojjk"]
+[ext_resource type="AudioStream" uid="uid://dnt0pnwetoy4v" path="res://assets/Audio/SFX/slide.mp3" id="5_hni07"]
+
+[node name="AudioManager" type="Node" node_paths=PackedStringArray("jump", "walk", "slide")]
+script = ExtResource("1_l80v7")
+jump = NodePath("JumpSFX")
+walk = NodePath("WalkSFX")
+slide = NodePath("SlideSFX")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_ve1xq")
+volume_db = -18.739
+autoplay = true
+
+[node name="JumpSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_l8bes")
+volume_db = -14.857
+
+[node name="WalkSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_2ojjk")
+volume_db = 5.622
+
+[node name="SlideSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_hni07")
+volume_db = -23.423

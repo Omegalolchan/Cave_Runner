@@ -15,6 +15,9 @@ func _input(event):
 		active = !active
 		enable_disable_UI()
 	
+	if Input.is_action_just_pressed("Menu"):
+		get_tree().change_scene_to_packed(load('res://assets/Scenes/Menu.tscn'))
+
 	if !active:
 		return
 	

@@ -44,7 +44,8 @@ func credits_back_button():
 func remove_all():
 	var n : Array = get_children()
 	for i in n.size():
-		remove_child(n[i])
+		if n[i] != $TextureRect:
+				remove_child(n[i])
 	for i in menu1.size():
 		add_child(menu1[i])
 	menu1[0].grab_focus()
@@ -61,7 +62,3 @@ func change_panel(_hide : Array, _show : Array, focus_node : Node):
 	
 	focus_node.grab_focus()
 	return
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass

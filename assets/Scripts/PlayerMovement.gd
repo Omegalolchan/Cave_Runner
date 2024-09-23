@@ -2,8 +2,9 @@ extends CharacterBody2D
 class_name Player
 
 signal var_to_anim(ground : bool, speed : Vector2, jump : bool, wall_jump : bool, walled : bool, slide : bool)
+signal died()
 
-const WALK_SPEED = 40.0 / 60
+const WALK_SPEED = 50.0 / 60
 var FPS_DELTA = 0.016
 var direction : float
 var base_velocity : Vector2
@@ -12,7 +13,6 @@ var ground_normal : Vector2
 
 var jump_input : bool
 var slide_input : bool
-#var hook_input : bool
 
 var jump_lock
 var jump_turn
@@ -32,9 +32,8 @@ var slide_deccel = 1
 var slide_burst_speed = 1.5
 var velocity_neutral_deccel = 2
 var gravity_scale : float = 10
-var hook_angle : float
 
-var gravity = (8 * 0.016) * gravity_scale
+var gravity = (9 * 0.016) * gravity_scale
 
 func GetInput():
 	var JumpInputPress = func():
@@ -67,21 +66,8 @@ func GetInput():
 
 	return
 
-func hook():
-	#var hook_dir = Vector2(1,0)
-	#hook_angle = hook_dir.angle_to(get_local_mouse_position())
-	#queue_redraw()
-
-	var d = Vector2(cos(hook_angle),sin(hook_angle))
-	if raycast(position, position + d * 64, true, true):
-		added_velocity.y += d.y * FPS_DELTA * 2
-		added_velocity.x += d.x * FPS_DELTA * 3
-		if added_velocity.x <= 0.1: added_velocity.x = 0.15 * sign(d.x)
-
-#func _draw():
-#	draw_line(Vector2(0,0), Vector2(32, 0).rotated(hook_angle), Color.GREEN, 1, false)
-#	var d = Vector2(cos(hook_angle),sin(hook_angle)) * 64
-#	draw_circle(d, 4, Color.DARK_RED)
+func die():
+	died.emit()
 
 func _physics_process(delta):
 	FPS_DELTA = delta
@@ -190,6 +176,14 @@ func handle_collision(_collision : KinematicCollision2D):
 	if _collision.get_normal().y < 0:
 		jump_turn = true
 		create_timer("jump_turn", 60 )
+	elif _collision.get_normal().y == 1 and velocity.y < 0: ## Handling player hitting head on roof
+		added_velocity.y = 0
+		#velocity.y = 0
+	elif _collision.get_normal().y > 0:
+		velocity = velocity.slide(_collision.get_normal())
+
+	if _collision.get_collider().name == "TileMap_spike":
+		die()
 	return 
 
 func velocity_neutral():

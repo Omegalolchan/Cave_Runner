@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Cave_Runner"
-run/main_scene="res://assets/Scenes/Debug Scene.tscn"
+run/main_scene="res://assets/Scenes/Menu.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 boot_splash/show_image=false
 config/icon="res://icon.svg"
@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 DebugWindow="*res://assets/Objects/DebugWindow.tscn"
+AudioManager="*res://assets/Objects/AudioManager.tscn"
 
 [display]
 
@@ -93,6 +94,11 @@ hook={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":88,"physical_keycode":0,"key_label":0,"unicode":120,"echo":false,"script":null)
 , Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":-1,"axis":4,"axis_value":1.0,"script":null)
+]
+}
+Menu={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194305,"physical_keycode":0,"key_label":0,"unicode":0,"echo":false,"script":null)
 ]
 }
 
