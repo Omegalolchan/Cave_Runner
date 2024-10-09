@@ -1,8 +1,10 @@
 extends CharacterBody2D
+class_name Player
 
 signal var_to_anim(ground : bool, speed : Vector2, jump : bool, wall_jump : bool, walled : bool, slide : bool)
+signal died()
 
-const WALK_SPEED = 40.0 / 60
+const WALK_SPEED = 50.0 / 60
 var FPS_DELTA = 0.016
 var direction : float
 var base_velocity : Vector2
@@ -31,7 +33,7 @@ var slide_burst_speed = 1.5
 var velocity_neutral_deccel = 2
 var gravity_scale : float = 10
 
-var gravity = (8 * 0.016) * gravity_scale
+var gravity = (9 * 0.016) * gravity_scale
 
 func GetInput():
 	var JumpInputPress = func():
@@ -57,13 +59,20 @@ func GetInput():
 		slide_input = true 
 	else:
 		slide_input = false
-	
+
+	#hook_input = Input.is_action_pressed("hook")
+	#if hook_input:
+	#	hook()
+
 	return
+
+func die():
+	died.emit()
 
 func _physics_process(delta):
 	FPS_DELTA = delta
 	GetInput()
-	#print(get_tree_string_pretty())
+	#print(added_velocity, "|||", velocity)
 	### Checking Wall collisions
 	on_wall = false
 	var wall_raycast = raycast(position - Vector2(6,-8), position + Vector2(6,8), true, true)
@@ -167,6 +176,14 @@ func handle_collision(_collision : KinematicCollision2D):
 	if _collision.get_normal().y < 0:
 		jump_turn = true
 		create_timer("jump_turn", 60 )
+	elif _collision.get_normal().y == 1 and velocity.y < 0: ## Handling player hitting head on roof
+		added_velocity.y = 0
+		#velocity.y = 0
+	elif _collision.get_normal().y > 0:
+		velocity = velocity.slide(_collision.get_normal())
+
+	if _collision.get_collider().name == "TileMap_spike":
+		die()
 	return 
 
 func velocity_neutral():
