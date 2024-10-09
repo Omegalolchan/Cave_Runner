@@ -182,8 +182,8 @@ func handle_collision(_collision : KinematicCollision2D):
 	elif _collision.get_normal().y > 0:
 		velocity = velocity.slide(_collision.get_normal())
 
-	if _collision.get_collider().name == "TileMap_spike":
-		die()
+	#if _collision.get_collider().name == "TileMap_spike":
+		#die()
 	return 
 
 func velocity_neutral():
