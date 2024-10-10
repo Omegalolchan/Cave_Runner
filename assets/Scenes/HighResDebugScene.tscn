@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://bwkeq7nbpmf23"]
+[gd_scene load_steps=2 format=3 uid="uid://bwkeq7nbpmf23"]
 
 [ext_resource type="Script" path="res://assets/Scripts/ResolutionHandler.gd" id="1_bcf2c"]
-[ext_resource type="PackedScene" uid="uid://dtx0nirtdo645" path="res://assets/Scenes/Level_1.tscn" id="2_y6ra7"]
 
 [node name="Node" type="Node"]
 
@@ -19,5 +18,3 @@ handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(320, 180)
 render_target_update_mode = 4
-
-[node name="Node2D" parent="SubViewportContainer/SubViewport" instance=ExtResource("2_y6ra7")]
