@@ -11,8 +11,9 @@ config_version=5
 [application]
 
 config/name="Cave_Runner"
-run/main_scene="res://assets/Scenes/Menu.tscn"
+run/main_scene="res://assets/Scenes/HighResDebugScene.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
+run/max_fps=60
 boot_splash/show_image=false
 config/icon="res://assets/ICON.png"
 

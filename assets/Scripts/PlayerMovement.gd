@@ -177,14 +177,12 @@ func handle_collision(_collision : KinematicCollision2D):
 		jump_turn = true
 		create_timer("jump_turn", 60 )
 	elif _collision.get_normal().y == 1 and velocity.y < 0: ## Handling player hitting head on roof
-		added_velocity.y = 0
+		added_velocity.y *= 0.5
 		#velocity.y = 0
 	elif _collision.get_normal().y > 0:
 		velocity = velocity.slide(_collision.get_normal())
 
-	#if _collision.get_collider().name == "TileMap_spike":
-		#die()
-	return 
+		return 
 
 func velocity_neutral():
 	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0 && on_floor: #letting the player have more control on his speed#

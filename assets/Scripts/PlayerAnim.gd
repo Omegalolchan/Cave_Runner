@@ -6,7 +6,6 @@ var hold = [
 ]
 
 var on : bool = true
-@onready var audio = get_node('/root/AudioManager')
 
 enum anim_to_play {
 	IDLE,
@@ -19,7 +18,7 @@ enum anim_to_play {
 	FALL,
 }
 
-func _on_player_var_to_anim(ground:bool, speed:Vector2, jump:bool, wall_jump:bool, walled:bool, slide:bool):
+func _on_player_var_to_anim(ground:bool, speed:Vector2, jump:bool, wall_jump:bool, _walled:bool, slide:bool):
 	if !is_zero_approx(sign(speed.x)) and animation != "WALLJUMP":
 		scale.x = sign(speed.x)
 	
@@ -33,25 +32,20 @@ func _on_player_var_to_anim(ground:bool, speed:Vector2, jump:bool, wall_jump:boo
 	if ground:
 		if speed == Vector2.ZERO:
 			play_anim(anim_to_play.IDLE)
-			audio.stop_all()
 			return
 		if speed != Vector2.ZERO and not slide:
 			play_anim(anim_to_play.WALK)
-			audio._walk()
 			return
 		if speed != Vector2.ZERO and slide:
 			play_anim(calc_slide_angle(speed))
-			audio._slide()
 	else:
 		if speed.y > 0 and hold[0] == "":
 			if frame == 2 and animation == 'FALL':
 				return
 			play_anim(anim_to_play.FALL)
-			audio.stop_all()
 			return
 		if speed.y <= 0 and jump and hold[0] == "" or hold[0] == "jump":
 			play_anim(anim_to_play.JUMP)
-			audio._jump()
 			return
 		if wall_jump and hold[0] == "" or hold[0] == "jump":
 			play_anim(anim_to_play.WALLJUMP)
@@ -59,7 +53,6 @@ func _on_player_var_to_anim(ground:bool, speed:Vector2, jump:bool, wall_jump:boo
 			hold[1] = 5
 			if !is_zero_approx(sign(speed.x)) :
 				scale.x = sign(-speed.x)
-			audio._jump()
 			return
 
 
@@ -89,5 +82,4 @@ func _on_player_died():
 
 func _on_death_particle_finished():
 	on = true
-	get_node('../../CheckPointManager')._on_player_death()
 	pass # Replace with function body.
