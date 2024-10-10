@@ -1,6 +1,10 @@
 extends CharacterBody2D
+class_name Player
 
-const WALK_SPEED = 40.0 / 60
+signal var_to_anim(ground : bool, speed : Vector2, jump : bool, wall_jump : bool, walled : bool, slide : bool)
+signal died()
+
+const WALK_SPEED = 50.0 / 60
 var FPS_DELTA = 0.016
 var direction : float
 var base_velocity : Vector2
@@ -12,7 +16,7 @@ var slide_input : bool
 
 var jump_lock
 var jump_turn
-var is_walljumping
+var is_walljumping : bool
 var is_jumping
 var is_sliding
 var on_floor
@@ -20,16 +24,16 @@ var on_wall
 var current_jump_time : float
 var current_coyote_time : float
 
-@export var coyote_max_time = 10
-@export var jump_max_time = 20
-@export var jump_speed = -35.0
-@export var slide_accel = 1
-@export var slide_deccel = 1
-@export var slide_burst_speed = 1.5
-@export var velocity_neutral_deccel = 2
-@export var gravity_scale : float = 10
+var coyote_max_time = 10
+var jump_max_time = 20
+var jump_speed = -35.0
+var slide_accel = 1
+var slide_deccel = 1
+var slide_burst_speed = 1.5
+var velocity_neutral_deccel = 2
+var gravity_scale : float = 10
 
-var gravity = (8 * 0.016) * gravity_scale
+var gravity = (9 * 0.016) * gravity_scale
 
 func GetInput():
 	var JumpInputPress = func():
@@ -55,13 +59,20 @@ func GetInput():
 		slide_input = true 
 	else:
 		slide_input = false
-	
+
+	#hook_input = Input.is_action_pressed("hook")
+	#if hook_input:
+	#	hook()
+
 	return
+
+func die():
+	died.emit()
 
 func _physics_process(delta):
 	FPS_DELTA = delta
 	GetInput()
-	#print(get_tree_string_pretty())
+	#print(added_velocity, "|||", velocity)
 	### Checking Wall collisions
 	on_wall = false
 	var wall_raycast = raycast(position - Vector2(6,-8), position + Vector2(6,8), true, true)
@@ -121,6 +132,7 @@ func _physics_process(delta):
 	on_floor = on_floorUpdate()
 	
 	move_and_collide(velocity)
+	var_to_anim.emit(on_floor , velocity, is_jumping, is_walljumping, on_wall, is_sliding)
 	return
 
 func on_floorUpdate():
@@ -164,7 +176,13 @@ func handle_collision(_collision : KinematicCollision2D):
 	if _collision.get_normal().y < 0:
 		jump_turn = true
 		create_timer("jump_turn", 60 )
-	return 
+	elif _collision.get_normal().y == 1 and velocity.y < 0: ## Handling player hitting head on roof
+		added_velocity.y *= 0.5
+		#velocity.y = 0
+	elif _collision.get_normal().y > 0:
+		velocity = velocity.slide(_collision.get_normal())
+
+		return 
 
 func velocity_neutral():
 	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0 && on_floor: #letting the player have more control on his speed#
