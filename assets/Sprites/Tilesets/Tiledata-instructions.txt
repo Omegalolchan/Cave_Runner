@@ -1,0 +1,17 @@
+	TILE DATA
+[0] = TILE TYPE 
+	0: Solid Block
+	1: Slope
+	2: Non-Solid
+	3: Death
+
+[1] = TILE LEVEL
+	0: Cave
+	1: Green
+	2: ####
+
+[2] = TILE POINT DIRECTION (used for oneways Ex: spikes)
+	0: UP
+	1: RIGHT
+	2: DOWN
+	3: LEFT

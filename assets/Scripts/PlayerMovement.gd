@@ -4,6 +4,8 @@ class_name Player
 signal var_to_anim(ground : bool, speed : Vector2, jump : bool, wall_jump : bool, walled : bool, slide : bool)
 signal died()
 
+@onready var tilemap0 : TileMapLayer = get_node('../Tilemap/Layer0')
+
 const WALK_SPEED = 50.0 / 60
 var FPS_DELTA = 0.016
 var direction : float
@@ -206,6 +208,15 @@ func velocity_neutral():
 
 func Slide():
 	if !on_floor: return
+
+	var tile_vector = tilemap0.local_to_map(tilemap0.to_local(position)) #### TODO SLIDE BUG STILL NOT FIXED
+	tile_vector.y += 2
+	tile_vector.x += direction * 1
+	if (tilemap0.get_cell_atlas_coords(tile_vector) != Vector2i(-1,-1)):
+		var tile_data = tilemap0.get_cell_tile_data((tile_vector)).get_custom_data('tile_data')
+		if tile_data[0] == 1:
+			print('bug happened')
+	
 	if ground_normal != up_direction:
 		if added_velocity.x == 0 && velocity.x == 0: # small push if player is standing still
 			added_velocity.x += sign(ground_normal.x) * 0.5
@@ -225,8 +236,8 @@ func Slide():
 			added_velocity.x += sign(velocity.x) * slide_burst_speed / 1.5
 			jump_lock = true
 			create_timer("slide_jump_lock", FPS_DELTA * 2)
-		added_velocity.x += -sign(added_velocity.x) * slide_deccel * FPS_DELTA
-	
+
+	added_velocity.x += -sign(added_velocity.x) * slide_deccel * FPS_DELTA
 	base_velocity.x = 0
 	return
 
