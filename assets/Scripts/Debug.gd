@@ -2,6 +2,7 @@ extends Control
 
 var placeholder_text = "-"
 var active = false
+var last_command : String
 @onready var external_script_node = $Node
 
 
@@ -41,12 +42,17 @@ func _input(event):
 			'Backspace':
 				backspace.call()
 				return
+			'Ctrl+R':
+				$Label.text = last_command
 			'Ctrl+L':
 				clear()
 			'Space':
 				$Label.text += " "
 			'Enter':
 				run_command($Label.text)
+				last_command = $Label.text
+				active = false
+				enable_disable_UI()
 
 func run_command(command_line : String):
 	if command_line.is_empty():
