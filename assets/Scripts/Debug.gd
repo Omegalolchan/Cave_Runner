@@ -58,6 +58,8 @@ func run_command(command_line : String):
 		'res':
 			size = Vector2i(int(command_array[1]), int(command_array[2]))
 			ResolutionHandler.window.size = size
+		'reloadscene':
+			get_tree().reload_current_scene()
 		_:
 			print("this commmand does not exist")
 	return

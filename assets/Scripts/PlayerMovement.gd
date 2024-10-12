@@ -209,13 +209,14 @@ func velocity_neutral():
 func Slide():
 	if !on_floor: return
 
-	var tile_vector = tilemap0.local_to_map(tilemap0.to_local(position)) #### TODO SLIDE BUG STILL NOT FIXED
+	var tile_vector = tilemap0.local_to_map(tilemap0.to_local(position)) #### todo slide bug still not fixed
 	tile_vector.y += 2
 	tile_vector.x += direction * 1
 	if (tilemap0.get_cell_atlas_coords(tile_vector) != Vector2i(-1,-1)):
 		var tile_data = tilemap0.get_cell_tile_data((tile_vector)).get_custom_data('tile_data')
 		if tile_data[0] == 1:
-			print('bug happened')
+			tilemap0.set_cell(tile_vector, 1, Vector2(0,0))
+			pass
 	
 	if ground_normal != up_direction:
 		if added_velocity.x == 0 && velocity.x == 0: # small push if player is standing still
