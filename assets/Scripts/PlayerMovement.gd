@@ -61,11 +61,6 @@ func GetInput():
 		slide_input = true 
 	else:
 		slide_input = false
-
-	#hook_input = Input.is_action_pressed("hook")
-	#if hook_input:
-	#	hook()
-
 	return
 
 func die():
@@ -81,8 +76,8 @@ func _physics_process(delta):
 	if wall_raycast:
 		if wall_raycast.normal == Vector2(0,0) or wall_raycast.normal == Vector2(-1,0) and !on_floor:
 			on_wall = true
-	
-	#region Jump
+		
+	#region Jump {{{
 	if (jump_input) :
 		current_jump_time -= 1
 	else: 
@@ -96,6 +91,7 @@ func _physics_process(delta):
 		if current_jump_time == jump_max_time - 1 && jump_turn:
 			added_velocity.x = modulus(added_velocity.x) * direction
 			jump_turn = false
+			is_sliding = false
 			
 	if is_walljumping and !on_floor and on_wall and !is_jumping:
 		base_velocity.y = 0
@@ -106,7 +102,7 @@ func _physics_process(delta):
 			added_velocity.x = sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed * 2
 		
 		
-	#endregion
+	#endregion }}}
 	
 	base_velocity.x = direction * WALK_SPEED
 	
@@ -209,14 +205,14 @@ func velocity_neutral():
 func Slide():
 	if !on_floor: return
 
-	var tile_vector = tilemap0.local_to_map(tilemap0.to_local(position)) #### todo slide bug still not fixed
-	tile_vector.y += 2
-	tile_vector.x += direction * 1
-	if (tilemap0.get_cell_atlas_coords(tile_vector) != Vector2i(-1,-1)):
-		var tile_data = tilemap0.get_cell_tile_data((tile_vector)).get_custom_data('tile_data')
-		if tile_data[0] == 1:
-			tilemap0.set_cell(tile_vector, 1, Vector2(0,0))
-			pass
+	#var tile_vector = tilemap0.local_to_map(tilemap0.to_local(position)) #### todo slide bug still not fixed
+	#tile_vector.y += 2
+	#tile_vector.x += direction * 1
+	#if (tilemap0.get_cell_atlas_coords(tile_vector) != Vector2i(-1,-1)):
+		#var tile_data = tilemap0.get_cell_tile_data((tile_vector)).get_custom_data('tile_data')
+		#if tile_data[0] == 1:
+			#tilemap0.set_cell(tile_vector, 1, Vector2(0,0))
+			#pass
 	
 	if ground_normal != up_direction:
 		if added_velocity.x == 0 && velocity.x == 0: # small push if player is standing still
