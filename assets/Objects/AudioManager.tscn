@@ -7,7 +7,6 @@
 [ext_resource type="AudioStream" uid="uid://dnt0pnwetoy4v" path="res://assets/Audio/SFX/slide.mp3" id="5_hni07"]
 
 [node name="AudioManager" type="Node" node_paths=PackedStringArray("jump", "walk", "slide")]
-process_mode = 4
 script = ExtResource("1_l80v7")
 jump = NodePath("JumpSFX")
 walk = NodePath("WalkSFX")
@@ -15,7 +14,7 @@ slide = NodePath("SlideSFX")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_ve1xq")
-volume_db = -18.739
+volume_db = -23.44
 autoplay = true
 
 [node name="JumpSFX" type="AudioStreamPlayer" parent="."]

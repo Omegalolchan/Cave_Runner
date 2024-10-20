@@ -65,11 +65,23 @@ func GetInput():
 
 func die():
 	died.emit()
+	return	
+
+var floorpos = Vector2(0,0)
+func _draw():
+	draw_circle(to_local(floorpos),2, Color.GREEN, true)
+	pass
 
 func _physics_process(delta):
 	FPS_DELTA = delta
 	GetInput()
-	#print(added_velocity, "|||", velocity)
+
+	## TODO REMOVE THIS BLOCK OF CODE SINCE IT HAS NO USE AFTER SLIDE BUGFIX IS DONE, AND ALSO INPLEMENT PROPER DEBUGGING TOOLS 
+	var floor_collision : Dictionary = raycast(position + Vector2(0,8),position + Vector2(0,16),true, true)
+	if floor_collision:
+		floorpos = floor_collision.position
+		queue_redraw()
+
 	### Checking Wall collisions
 	on_wall = false
 	var wall_raycast = raycast(position - Vector2(6,-8), position + Vector2(6,8), true, true)
@@ -204,15 +216,6 @@ func velocity_neutral():
 
 func Slide():
 	if !on_floor: return
-
-	#var tile_vector = tilemap0.local_to_map(tilemap0.to_local(position)) #### todo slide bug still not fixed
-	#tile_vector.y += 2
-	#tile_vector.x += direction * 1
-	#if (tilemap0.get_cell_atlas_coords(tile_vector) != Vector2i(-1,-1)):
-		#var tile_data = tilemap0.get_cell_tile_data((tile_vector)).get_custom_data('tile_data')
-		#if tile_data[0] == 1:
-			#tilemap0.set_cell(tile_vector, 1, Vector2(0,0))
-			#pass
 	
 	if ground_normal != up_direction:
 		if added_velocity.x == 0 && velocity.x == 0: # small push if player is standing still
@@ -236,6 +239,15 @@ func Slide():
 
 	added_velocity.x += -sign(added_velocity.x) * slide_deccel * FPS_DELTA
 	base_velocity.x = 0
+
+	var floor_collision : Dictionary = raycast(position + Vector2(0,8),position + Vector2(0,16),true, true)
+	var tile_vector = tilemap0.local_to_map(tilemap0.to_local(position)) 
+	tile_vector.y += 2
+	tile_vector.x += direction * 1
+	if (tilemap0.get_cell_atlas_coords(tile_vector) != Vector2i(-1,-1)):
+		var tile_data = tilemap0.get_cell_tile_data((tile_vector)).get_custom_data('tile_data')
+		if tile_data[0] == 1:	
+			position = floor_collision.position + Vector2(0,-8)
 	return
 
 func modulus(n : float):
@@ -298,7 +310,7 @@ func get_timer(_name : String): # Returns the time left/passed of given Timer
 	value.exists = true
 	return value
 
-func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, exclude_self : bool):
+func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, exclude_self : bool) -> Dictionary:
 	var space_state = get_world_2d().direct_space_state # getting physics space
 	var query = PhysicsRayQueryParameters2D.create(start_vector, end_vector)
 	if exclude_self: query.exclude = [self]
