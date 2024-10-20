@@ -1,25 +1,35 @@
 extends Control
 
 var placeholder_text = "-"
-var active = false
+var on = false
+var draw_on = false
 var last_command : String
 @onready var external_script_node = $Node
-
+@onready var player : Player = get_node('/root/Node/SubViewportContainer/SubViewport/Node2D/Player')
 
 func _ready():
 	$Label.text = placeholder_text
 	enable_disable_UI()
 	return
 
+func _process(_delta):
+	if draw_on:
+		queue_redraw()
+	pass
+
+func _draw():
+	draw_circle(player.debug_draw_position[0], 3, Color.GREEN, true)	
+	pass
+
 func _input(event):
 	if Input.is_action_just_pressed("debug"):
-		active = !active
+		on = !on
 		enable_disable_UI()
 	
 	#if Input.is_action_just_pressed("Menu"):
 	#	get_tree().change_scene_to_packed(load('res://assets/Scenes/Menu.tscn'))
 
-	if !active:
+	if !on:
 		return
 	
 	var backspace = func():
@@ -42,6 +52,8 @@ func _input(event):
 			'Backspace':
 				backspace.call()
 				return
+			'Slash':
+				$Label.text += "/"	
 			'Ctrl+R':
 				$Label.text = last_command
 			'Ctrl+L':
@@ -51,7 +63,7 @@ func _input(event):
 			'Enter':
 				run_command($Label.text)
 				last_command = $Label.text
-				active = false
+				on = false
 				enable_disable_UI()
 
 func run_command(command_line : String):
@@ -66,6 +78,8 @@ func run_command(command_line : String):
 			ResolutionHandler.window.size = size
 		'reloadscene':
 			get_tree().reload_current_scene()
+		'draw':
+			draw_on = !draw_on
 		_:
 			print("this commmand does not exist")
 	return
@@ -75,7 +89,7 @@ func clear():
 	return
 
 func enable_disable_UI():
-	if active:
+	if on:
 		visible = true
 		$Label.text = placeholder_text
 	else:

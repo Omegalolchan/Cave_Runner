@@ -36,6 +36,7 @@ var velocity_neutral_deccel = 2
 var gravity_scale : float = 10
 
 var gravity = (9 * 0.016) * gravity_scale
+var debug_draw_position : Array = [Vector2(0,0), Vector2(0,0)]
 
 func GetInput():
 	var JumpInputPress = func():
@@ -56,7 +57,6 @@ func GetInput():
 	if(Input.is_action_just_pressed("jump")): JumpInputPress.call()
 	if(Input.is_action_just_released("jump")): JumpInputRelease.call()
 	
-	
 	if Input.is_action_pressed("slide"):
 		slide_input = true 
 	else:
@@ -67,20 +67,9 @@ func die():
 	died.emit()
 	return	
 
-var floorpos = Vector2(0,0)
-func _draw():
-	draw_circle(to_local(floorpos),2, Color.GREEN, true)
-	pass
-
 func _physics_process(delta):
 	FPS_DELTA = delta
 	GetInput()
-
-	## TODO REMOVE THIS BLOCK OF CODE SINCE IT HAS NO USE AFTER SLIDE BUGFIX IS DONE, AND ALSO INPLEMENT PROPER DEBUGGING TOOLS 
-	var floor_collision : Dictionary = raycast(position + Vector2(0,8),position + Vector2(0,16),true, true)
-	if floor_collision:
-		floorpos = floor_collision.position
-		queue_redraw()
 
 	### Checking Wall collisions
 	on_wall = false
@@ -240,14 +229,18 @@ func Slide():
 	added_velocity.x += -sign(added_velocity.x) * slide_deccel * FPS_DELTA
 	base_velocity.x = 0
 
-	var floor_collision : Dictionary = raycast(position + Vector2(0,8),position + Vector2(0,16),true, true)
-	var tile_vector = tilemap0.local_to_map(tilemap0.to_local(position)) 
-	tile_vector.y += 2
-	tile_vector.x += direction * 1
-	if (tilemap0.get_cell_atlas_coords(tile_vector) != Vector2i(-1,-1)):
-		var tile_data = tilemap0.get_cell_tile_data((tile_vector)).get_custom_data('tile_data')
-		if tile_data[0] == 1:	
-			position = floor_collision.position + Vector2(0,-8)
+	var tile_vector_downforward = tilemap0.local_to_map(tilemap0.to_local(position + Vector2(0,8))) 
+	var tile_vector_down = tile_vector_downforward # df is just down at this point
+	tile_vector_downforward.y += 0
+	tile_vector_downforward.x += direction * 1
+	debug_draw_position[0] = to_global(tile_vector_down)
+	debug_draw_position[1] = to_global(tile_vector_downforward)
+	if tilemap0.get_cell_atlas_coords(tile_vector_downforward) != Vector2i(-1,-1) and tilemap0.get_cell_atlas_coords(tile_vector_down) != Vector2i(-1,-1):
+		var tile_data_df = tilemap0.get_cell_tile_data((tile_vector_downforward)).get_custom_data('tile_data')
+		var tile_data_d = tilemap0.get_cell_tile_data((tile_vector_down)).get_custom_data('tile_data')
+		if tile_data_df[0] == 1 and tile_data_d:
+			pass
+	#	print(printmsg)
 	return
 
 func modulus(n : float):
