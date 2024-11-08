@@ -36,7 +36,6 @@ var velocity_neutral_deccel = 2
 var gravity_scale : float = 10
 
 var gravity = (9 * 0.016) * gravity_scale
-var debug_draw_position : Array = [Vector2(0,0), Vector2(0,0)]
 
 func GetInput():
 	var JumpInputPress = func():
@@ -162,7 +161,7 @@ func fix_velocity_angle(_collision : KinematicCollision2D):
 	return
 
 func handle_collision(_collision : KinematicCollision2D):
-	#region handling walls
+	#region handling walls {{{
 	var same_velocity_aganist_wall = func(v_to_check : float):
 		if sign(_collision.get_position().x - position.x) != sign(v_to_check) && v_to_check == 0:
 			return false
@@ -171,7 +170,7 @@ func handle_collision(_collision : KinematicCollision2D):
 	if (round(_collision.get_angle(up_direction) * 10) / 10) == 1.6 && same_velocity_aganist_wall.call(velocity.x):
 		velocity.x = 0
 		added_velocity.x = 0
-	#endregion
+	#endregion }}}
 	if _collision.get_normal().y < 0:
 		jump_turn = true
 		create_timer("jump_turn", 60 )
@@ -180,8 +179,10 @@ func handle_collision(_collision : KinematicCollision2D):
 		#velocity.y = 0
 	elif _collision.get_normal().y > 0:
 		velocity = velocity.slide(_collision.get_normal())
+	
 
-		return 
+
+	return 
 
 func velocity_neutral():
 	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0 && on_floor: #letting the player have more control on his speed#
@@ -229,18 +230,6 @@ func Slide():
 	added_velocity.x += -sign(added_velocity.x) * slide_deccel * FPS_DELTA
 	base_velocity.x = 0
 
-	var tile_vector_downforward = tilemap0.local_to_map(tilemap0.to_local(position + Vector2(0,8))) 
-	var tile_vector_down = tile_vector_downforward # df is just down at this point
-	tile_vector_downforward.y += 0
-	tile_vector_downforward.x += direction * 1
-	debug_draw_position[0] = to_global(tile_vector_down)
-	debug_draw_position[1] = to_global(tile_vector_downforward)
-	if tilemap0.get_cell_atlas_coords(tile_vector_downforward) != Vector2i(-1,-1) and tilemap0.get_cell_atlas_coords(tile_vector_down) != Vector2i(-1,-1):
-		var tile_data_df = tilemap0.get_cell_tile_data((tile_vector_downforward)).get_custom_data('tile_data')
-		var tile_data_d = tilemap0.get_cell_tile_data((tile_vector_down)).get_custom_data('tile_data')
-		if tile_data_df[0] == 1 and tile_data_d:
-			pass
-	#	print(printmsg)
 	return
 
 func modulus(n : float):

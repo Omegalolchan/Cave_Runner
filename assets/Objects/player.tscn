@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://cv2005kajth2r"]
+[gd_scene load_steps=49 format=3 uid="uid://cv2005kajth2r"]
 
 [ext_resource type="Script" path="res://assets/Scripts/PlayerMovement.gd" id="1_geve8"]
 [ext_resource type="Texture2D" uid="uid://bcgws8c1h0hm8" path="res://assets/Sprites/playerFall.png" id="2_j10ss"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://c81hn3td5innj" path="res://assets/Sprites/PlayerSlideSheet.png" id="5_k5seh"]
 [ext_resource type="Texture2D" uid="uid://bts3rs4mgoocp" path="res://assets/Sprites/PlayerSlideUp-Sheet.png" id="6_egpcx"]
 [ext_resource type="Texture2D" uid="uid://b4i5x0vrknjix" path="res://assets/Sprites/BubbleDeathParticle.png" id="11_ibwfj"]
+[ext_resource type="Script" path="res://assets/Scripts/PlayerArea2D.gd" id="12_gtp1k"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_144sc"]
 atlas = ExtResource("2_od3j2")
@@ -335,6 +336,16 @@ color = Color(0.435294, 0.831373, 0.207843, 1)
 anim_speed_min = 3.87
 anim_speed_max = 10.34
 
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("12_gtp1k")
+
+[node name="HitBox" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0.5, 1.5)
+shape = SubResource("RectangleShape2D_sbs3j")
+
 [connection signal="died" from="." to="Sprite" method="_on_player_died"]
 [connection signal="var_to_anim" from="." to="Sprite" method="_on_player_var_to_anim"]
 [connection signal="finished" from="DeathParticle" to="Sprite" method="_on_death_particle_finished"]
+[connection signal="body_shape_entered" from="Area2D" to="Area2D" method="_on_area_entered"]
