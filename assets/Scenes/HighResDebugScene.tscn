@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://dnfkoufejparh" path="res://assets/Scenes/Debug Scene.tscn" id="2_fehfa"]
 
 [node name="Node" type="Node"]
+metadata/_edit_horizontal_guides_ = [1080.0]
+metadata/_edit_vertical_guides_ = [1920.0]
 
 [node name="ResolutionHandler" type="Node" parent="."]
 script = ExtResource("1_bcf2c")

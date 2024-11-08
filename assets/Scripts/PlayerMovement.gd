@@ -4,6 +4,8 @@ class_name Player
 signal var_to_anim(ground : bool, speed : Vector2, jump : bool, wall_jump : bool, walled : bool, slide : bool)
 signal died()
 
+# VARIABLES {{{
+
 @onready var tilemap0 : TileMapLayer = get_node('../Tilemap/Layer0')
 
 const WALK_SPEED = 50.0 / 60
@@ -36,7 +38,9 @@ var velocity_neutral_deccel = 2
 var gravity_scale : float = 10
 
 var gravity = (9 * 0.016) * gravity_scale
+#}}}
 
+# INPUT {{{
 func GetInput():
 	var JumpInputPress = func():
 		jump_input = true
@@ -61,9 +65,12 @@ func GetInput():
 	else:
 		slide_input = false
 	return
+# }}}
 
-func die():
+func Die():
 	died.emit()
+	added_velocity = Vector2(0,-1)
+	base_velocity = Vector2.ZERO
 	return	
 
 func _physics_process(delta):
@@ -184,6 +191,7 @@ func handle_collision(_collision : KinematicCollision2D):
 
 	return 
 
+# velocity neutral (decel cenarios) {{{
 func velocity_neutral():
 	if direction != sign(added_velocity.x) && direction != 0 && added_velocity.x != 0 && on_floor: #letting the player have more control on his speed#
 		added_velocity.x += -sign(added_velocity.x) * velocity_neutral_deccel * 2 * FPS_DELTA
@@ -203,6 +211,7 @@ func velocity_neutral():
 		added_velocity.x = 0
 	
 	return
+# }}}
 
 func Slide():
 	if !on_floor: return
@@ -232,6 +241,7 @@ func Slide():
 
 	return
 
+# timer, raycast and other calc functions {{{
 func modulus(n : float):
 	return sqrt(pow(n, 2))
 
@@ -299,3 +309,4 @@ func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, ex
 	query.hit_from_inside = inside_hit 
 	var result = space_state.intersect_ray(query)
 	return result
+# }}}
