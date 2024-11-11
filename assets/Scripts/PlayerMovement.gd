@@ -67,9 +67,9 @@ func GetInput():
 	return
 # }}}
 
-func Die():
+func die():
 	died.emit()
-	added_velocity = Vector2(0,-1)
+	added_velocity = Vector2.ZERO
 	base_velocity = Vector2.ZERO
 	return	
 

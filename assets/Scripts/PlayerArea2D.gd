@@ -3,6 +3,8 @@ extends Area2D
 @onready var player : Player = get_node('../../Player')
 
 func _physics_process(_delta):
-	if get_overlapping_bodies():
-		player.Die()
+	var bodies : Array[Node2D] = get_overlapping_bodies()
+	if bodies.size() > 0:
+		get_node('../Sprite').update_death_push(Vector2.ZERO, 10)
+		player.die()
 	return

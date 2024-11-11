@@ -4,8 +4,11 @@ var hold = [
 	"", # EX : air, jump (all ground anim cancels)
 	0,
 ]
+@onready var player : Player= get_parent()
 
 var on : bool = true
+
+var death_push: Vector2
 
 enum anim_to_play {
 	IDLE,
@@ -58,6 +61,12 @@ func _on_player_var_to_anim(ground:bool, speed:Vector2, jump:bool, wall_jump:boo
 
 	pass
 
+func _process(_delta: float) -> void:
+	if animation == 'DIE':
+		offset = lerp(offset, death_push, 0.5)
+		player.velocity = Vector2.ZERO
+	return
+
 func calc_slide_angle(speed : Vector2) -> anim_to_play:
 	if speed.y > 0:
 		return anim_to_play.SLIDE_DOWN
@@ -73,6 +82,10 @@ func play_anim(anim : anim_to_play):
 	play(anim_array[anim], 1.0, false)
 	return
 
+func update_death_push(_vector : Vector2, speed : float = 10):
+	death_push = (player.velocity * -1).normalized() * speed
+	return
+
 
 func _on_player_died():
 	on = false
@@ -82,4 +95,10 @@ func _on_player_died():
 
 func _on_death_particle_finished():
 	on = true
+	death_push = Vector2.ZERO
+	offset = Vector2(0,0)
 	pass # Replace with function body.
+
+
+
+
