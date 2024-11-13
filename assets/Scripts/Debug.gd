@@ -17,10 +17,6 @@ func _process(_delta):
 		queue_redraw()
 	pass
 
-func _draw():
-	draw_circle(player.debug_draw_position[0], 3, Color.GREEN, true)	
-	pass
-
 func _input(event):
 	if Input.is_action_just_pressed("debug"):
 		on = !on

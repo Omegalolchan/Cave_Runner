@@ -22,6 +22,7 @@ config/icon="res://assets/ICON.png"
 DebugWindow="*res://assets/Objects/DebugWindow.tscn"
 AudioManager="*res://assets/Objects/AudioManager.tscn"
 checkpoint_manager="*res://assets/Objects/CheckpointManager.tscn"
+Global="*res://assets/Scripts/Global.gd"
 
 [display]
 

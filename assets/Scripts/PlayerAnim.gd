@@ -1,10 +1,16 @@
 extends AnimatedSprite2D
 
+signal death_animation_finished()
+
 var hold = [
 	"", # EX : air, jump (all ground anim cancels)
 	0,
 ]
-@onready var player : Player= get_parent()
+var player : Player:
+	set(_value): 
+		player = get_parent()
+	get:
+		return get_parent()
 
 var on : bool = true
 
@@ -21,16 +27,13 @@ enum anim_to_play {
 	FALL,
 }
 
+func _ready() -> void:
+	player = player
+
 func _on_player_var_to_anim(ground:bool, speed:Vector2, jump:bool, wall_jump:bool, _walled:bool, slide:bool):
 	if !is_zero_approx(sign(speed.x)) and animation != "WALLJUMP":
 		scale.x = sign(speed.x)
 	
-	if hold[1] >= frame:
-		hold[1] = 0
-		hold[0] = ""
-
-	if animation == 'DIE' and animation_finished:
-		get_node('../DeathParticle').emitting = true
 
 	if ground:
 		if speed == Vector2.ZERO:
@@ -62,9 +65,16 @@ func _on_player_var_to_anim(ground:bool, speed:Vector2, jump:bool, wall_jump:boo
 	pass
 
 func _process(_delta: float) -> void:
+	if hold[1] >= frame:
+		hold[1] = 0
+		hold[0] = ""
+	
+	#if animation == 'DIE' and animation_finished:
+		#get_node('../DeathParticle').emitting = true
+	
 	if animation == 'DIE':
-		offset = lerp(offset, death_push, 0.5)
-		player.velocity = Vector2.ZERO
+		offset += death_push
+		pass
 	return
 
 func calc_slide_angle(speed : Vector2) -> anim_to_play:
@@ -82,14 +92,16 @@ func play_anim(anim : anim_to_play):
 	play(anim_array[anim], 1.0, false)
 	return
 
-func update_death_push(_vector : Vector2, speed : float = 10):
+func update_death_push(_vector : Vector2, speed : float = 1):
 	death_push = (player.velocity * -1).normalized() * speed
 	return
 
 
 func _on_player_died():
-	on = false
-	play('DIE')
+	if animation != 'DIE':
+		on = false
+		play('DIE')
+		get_node('../DeathParticle').emitting = true
 	pass # Replace with function body.
 
 
@@ -97,6 +109,7 @@ func _on_death_particle_finished():
 	on = true
 	death_push = Vector2.ZERO
 	offset = Vector2(0,0)
+	death_animation_finished.emit()
 	pass # Replace with function body.
 
 

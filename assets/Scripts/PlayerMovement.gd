@@ -25,9 +25,10 @@ var is_jumping
 var is_sliding
 var on_floor
 var on_wall
+var dead : bool
+
 var current_jump_time : float
 var current_coyote_time : float
-
 var coyote_max_time = 10
 var jump_max_time = 20
 var jump_speed = -35.0
@@ -69,13 +70,19 @@ func GetInput():
 
 func die():
 	died.emit()
+	dead = true
 	added_velocity = Vector2.ZERO
 	base_velocity = Vector2.ZERO
 	return	
 
+func _init() -> void:
+	Global.player = self
+
 func _physics_process(delta):
 	FPS_DELTA = delta
 	GetInput()
+
+	if dead: return
 
 	### Checking Wall collisions
 	on_wall = false
