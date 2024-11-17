@@ -5,7 +5,7 @@ var on = false
 var draw_on = false
 var last_command : String
 @onready var external_script_node = $Node
-@onready var player : Player = get_node('/root/Node/SubViewportContainer/SubViewport/Node2D/Player')
+@onready var player : Player = Global.player
 
 func _ready():
 	$Label.text = placeholder_text

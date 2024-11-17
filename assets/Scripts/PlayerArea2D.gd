@@ -1,6 +1,6 @@
 extends Area2D
 
-@onready var player : Player = get_node('../../Player')
+@onready var player : Player = Global.player
 
 func _physics_process(_delta):
 	var bodies : Array[Node2D] = get_overlapping_bodies()

@@ -8,9 +8,9 @@ var hold = [
 ]
 var player : Player:
 	set(_value): 
-		player = get_parent()
+		player = Global.player
 	get:
-		return get_parent()
+		return Global.player
 
 var on : bool = true
 
@@ -111,7 +111,3 @@ func _on_death_particle_finished():
 	offset = Vector2(0,0)
 	death_animation_finished.emit()
 	pass # Replace with function body.
-
-
-
-
