@@ -37,7 +37,13 @@ func _input(event):
 	
 	if event is InputEventKey and event.is_pressed():
 		var key_text = event.as_text()
-		if key_text.length() <= 1:
+
+		if key_text.contains('Shift+') and key_text.length() == 7: # SHIFT+ANYLETTER length is 7
+			if $Label.text == placeholder_text: 
+				$Label.text = ""
+			key_text = key_text.erase(0,6)			
+			$Label.text += key_text
+		elif key_text.length() == 1:
 			if $Label.text == placeholder_text: 
 				$Label.text = ""
 			key_text = key_text.to_lower()
@@ -74,6 +80,10 @@ func run_command(command_line : String):
 			ResolutionHandler.window.size = size
 		'reloadscene':
 			get_tree().reload_current_scene()
+		'loadscene':
+			var _str : String = command_line 
+			_str = _str.erase(0, command_array[0].length() + 1)
+			Global.change_scene(_str)
 		'draw':
 			draw_on = !draw_on
 		_:
