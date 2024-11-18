@@ -1,21 +1,27 @@
-extends Control
+extends Node2D
 
 var placeholder_text = "-"
 var on = false
 var draw_on = false
 var last_command : String
+var label_text
+var default_font = ThemeDB.fallback_font
 @onready var external_script_node = $Node
 @onready var player : Player = Global.player
 
 func _ready():
-	$Label.text = placeholder_text
+	label_text = placeholder_text
 	enable_disable_UI()
 	return
 
 func _process(_delta):
+	print(DisplayServer.screen_get_size())
+
 	if draw_on:
 		queue_redraw()
-	pass
+
+func _draw():
+	draw_string(default_font, Vector2(0,32), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 32)
 
 func _input(event):
 	if Input.is_action_just_pressed("debug"):
@@ -29,25 +35,25 @@ func _input(event):
 		return
 	
 	var backspace = func():
-		var d_text : String = $Label.text
+		var d_text : String = label_text
 		if d_text.is_empty():
 			return
 		d_text = d_text.erase(d_text.length()-1, 1)
-		$Label.text = d_text
+		label_text = d_text
 	
 	if event is InputEventKey and event.is_pressed():
 		var key_text = event.as_text()
 
 		if key_text.contains('Shift+') and key_text.length() == 7: # SHIFT+ANYLETTER length is 7
-			if $Label.text == placeholder_text: 
-				$Label.text = ""
+			if label_text == placeholder_text: 
+				label_text = ""
 			key_text = key_text.erase(0,6)			
-			$Label.text += key_text
+			label_text += key_text
 		elif key_text.length() == 1:
-			if $Label.text == placeholder_text: 
-				$Label.text = ""
+			if label_text == placeholder_text: 
+				label_text = ""
 			key_text = key_text.to_lower()
-			$Label.text += key_text
+			label_text += key_text
 			return
 		
 		match key_text:
@@ -55,16 +61,16 @@ func _input(event):
 				backspace.call()
 				return
 			'Slash':
-				$Label.text += "/"	
+				label_text += "/"	
 			'Ctrl+R':
-				$Label.text = last_command
+				label_text = last_command
 			'Ctrl+L':
 				clear()
 			'Space':
-				$Label.text += " "
+				label_text += " "
 			'Enter':
-				run_command($Label.text)
-				last_command = $Label.text
+				run_command(label_text)
+				last_command = label_text
 				on = false
 				enable_disable_UI()
 
@@ -76,7 +82,7 @@ func run_command(command_line : String):
 		'run':
 			run_external_script()
 		'res':
-			size = Vector2i(int(command_array[1]), int(command_array[2]))
+			var size = Vector2i(int(command_array[1]), int(command_array[2]))
 			ResolutionHandler.window.size = size
 		'reloadscene':
 			get_tree().reload_current_scene()
@@ -91,16 +97,16 @@ func run_command(command_line : String):
 	return
 
 func clear():
-	$Label.text = placeholder_text
+	label_text = placeholder_text
 	return
 
 func enable_disable_UI():
 	if on:
-		visible = true
-		$Label.text = placeholder_text
+		label_text = placeholder_text
+		draw_on = true
 	else:
-		$Label.text = ""
-		visible = false
+		draw_on = false
+		label_text = ""
 
 func run_external_script():
 	###################################################
