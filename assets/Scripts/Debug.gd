@@ -15,24 +15,25 @@ func _ready():
 	return
 
 func _process(_delta):
-	print(DisplayServer.screen_get_size())
-
-	if draw_on:
-		queue_redraw()
+	queue_redraw()
 
 func _draw():
-	draw_string(default_font, Vector2(0,32), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 32)
+	if draw_on:
+		draw_string(default_font, Vector2(0,32), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, Color.LIGHT_GREEN)
+		draw_string(default_font, Vector2(0,DisplayServer.screen_get_size().y - 32),"Click to change position", HORIZONTAL_ALIGNMENT_LEFT, -1, 32)
 
 func _input(event):
 	if Input.is_action_just_pressed("debug"):
 		on = !on
 		enable_disable_UI()
-	
-	#if Input.is_action_just_pressed("Menu"):
-	#	get_tree().change_scene_to_packed(load('res://assets/Scenes/Menu.tscn'))
 
 	if !on:
 		return
+
+	if event is InputEventMouseButton and event.is_released():
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			Global.player.position = Global.player.get_global_mouse_position()
+		pass
 	
 	var backspace = func():
 		var d_text : String = label_text
@@ -90,8 +91,10 @@ func run_command(command_line : String):
 			var _str : String = command_line 
 			_str = _str.erase(0, command_array[0].length() + 1)
 			Global.change_scene(_str)
-		'draw':
-			draw_on = !draw_on
+		'echo':
+			var _str : String = command_line 
+			_str = _str.erase(0, command_array[0].length() + 1)
+			print(_str)
 		_:
 			print("this commmand does not exist")
 	return
