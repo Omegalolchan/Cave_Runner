@@ -95,6 +95,11 @@ func run_command(command_line : String):
 			var _str : String = command_line 
 			_str = _str.erase(0, command_array[0].length() + 1)
 			print(_str)
+		'setcheckpoint':
+			if Global.managers['checkpoint_manager'] != null:
+				Global.managers['checkpoint_manager'].update_checkpoint(Global.player.position, 'debug')	
+			else: 
+				print('Not in a level')
 		_:
 			print("this commmand does not exist")
 	return
