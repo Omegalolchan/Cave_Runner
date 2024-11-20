@@ -86,7 +86,7 @@ func run_command(command_line : String):
 			var size = Vector2i(int(command_array[1]), int(command_array[2]))
 			ResolutionHandler.window.size = size
 		'reloadscene':
-			get_tree().reload_current_scene()
+			Global.change_scene(Global._current_scene_file_name)
 		'loadscene':
 			var _str : String = command_line 
 			_str = _str.erase(0, command_array[0].length() + 1)
