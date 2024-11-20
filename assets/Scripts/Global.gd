@@ -19,15 +19,16 @@ func _default():
 	}
 	return
 
-func initialize_and_update_references():
-	_main_node = get_node('/root/Node')
+func initialize_and_update_references(update_main_node : bool):
+	if update_main_node : 
+		_main_node = get_node('/root/Node')
 	if _main_node is LevelLoader:
 		_current_scene = current_scene_type.LEVEL
 		managers['checkpoint_manager'] = CheckpointManager.new()
 		add_child(managers['checkpoint_manager'])
 
 func _ready() -> void:
-	initialize_and_update_references()
+	initialize_and_update_references(true)
 	return
 
 func change_scene(scene : String) -> void:
@@ -36,6 +37,7 @@ func change_scene(scene : String) -> void:
 	var scene_to_load : PackedScene = load('res://assets/Scenes/' + scene + '.tscn')
 	_main_node = scene_to_load.instantiate()
 	get_tree().root.add_child(_main_node)
+	initialize_and_update_references(false)
 	pass
 
 func get_current_scene_type():
