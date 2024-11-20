@@ -100,6 +100,11 @@ func run_command(command_line : String):
 				Global.managers['checkpoint_manager'].update_checkpoint(Global.player.position, 'debug')	
 			else: 
 				print('Not in a level')
+		'help':
+			print("commands: run //run external script")
+			print("commands: res //change resolution -> res[space]x[space]y")
+			print("commands: reloadscene //reloads the current main scene (not level)")
+			print("commands: setscheckpoint //sets checkpoint")
 		_:
 			print("this commmand does not exist")
 	return
