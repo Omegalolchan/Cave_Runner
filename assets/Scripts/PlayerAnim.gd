@@ -73,7 +73,7 @@ func _process(_delta: float) -> void:
 		#get_node('../DeathParticle').emitting = true
 	
 	if animation == 'DIE':
-		offset += death_push
+		player.position = lerp(player.position, death_push, .1)
 		pass
 	return
 
@@ -92,8 +92,14 @@ func play_anim(anim : anim_to_play):
 	play(anim_array[anim], 1.0, false)
 	return
 
-func update_death_push(_vector : Vector2, speed : float = 1):
-	death_push = (player.velocity * -1).normalized() * speed
+func update_death_push(_vector : Vector2, distance : float = 1):
+	death_push.x = -sign(player.velocity.x)
+	death_push.y = -sign(player.velocity.y)
+	if death_push.y == 0:
+		death_push.y = -.25
+	death_push = death_push.normalized()
+	death_push *= distance
+	death_push += player.position
 	return
 
 

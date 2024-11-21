@@ -16,7 +16,7 @@ texture = ExtResource("2_d0esk")
 centered = false
 
 [node name="Player" parent="." instance=ExtResource("3_sfsnp")]
-position = Vector2(73, 72)
+position = Vector2(91, 128)
 
 [node name="Camera2D" parent="." instance=ExtResource("4_64b5i")]
 
