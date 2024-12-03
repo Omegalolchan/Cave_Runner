@@ -86,7 +86,7 @@ func _physics_process(delta):
 
 	### Checking Wall collisions
 	on_wall = false
-	var wall_raycast = raycast(position - Vector2(6,-8), position + Vector2(6,8), true, true)
+	var wall_raycast = raycast(position - Vector2(6,-8), position + Vector2(6,8), true, true, 1)
 	if wall_raycast:
 		if wall_raycast.normal == Vector2(0,0) or wall_raycast.normal == Vector2(-1,0) and !on_floor:
 			on_wall = true
@@ -309,11 +309,12 @@ func get_timer(_name : String): # Returns the time left/passed of given Timer
 	value.exists = true
 	return value
 
-func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, exclude_self : bool) -> Dictionary:
+func raycast(start_vector : Vector2, end_vector : Vector2, inside_hit : bool, exclude_self : bool, layer : int) -> Dictionary:
 	var space_state = get_world_2d().direct_space_state # getting physics space
 	var query = PhysicsRayQueryParameters2D.create(start_vector, end_vector)
 	if exclude_self: query.exclude = [self]
 	query.hit_from_inside = inside_hit 
+	query.collision_mask = layer
 	var result = space_state.intersect_ray(query)
 	return result
 # }}}
