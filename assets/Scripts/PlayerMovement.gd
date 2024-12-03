@@ -6,6 +6,7 @@ signal died()
 
 # VARIABLES {{{
 
+var on : bool
 @onready var tilemap0 : TileMapLayer = get_node('../Tilemap/Layer0')
 
 const WALK_SPEED = 50.0 / 60
@@ -43,6 +44,8 @@ var gravity = (9 * 0.016) * gravity_scale
 
 # INPUT {{{
 func GetInput():
+	if not on: return
+
 	var JumpInputPress = func():
 		jump_input = true
 		if on_floor:

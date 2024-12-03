@@ -116,9 +116,11 @@ func clear():
 func enable_disable_UI():
 	if on:
 		label_text = placeholder_text
+		Global.player.on = false
 		draw_on = true
 	else:
 		draw_on = false
+		Global.player.on = true
 		label_text = ""
 
 func run_external_script():
