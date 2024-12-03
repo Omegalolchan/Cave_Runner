@@ -38,6 +38,7 @@ var slide_deccel = 1
 var slide_burst_speed = 1.5
 var velocity_neutral_deccel = 2
 var gravity_scale : float = 10
+var walljump_clamp : Vector4 = Vector4(-5,5, -40, 0) # first 2 are x , last 2 are y
 
 var gravity = (9 * 0.016) * gravity_scale
 #}}}
@@ -110,21 +111,19 @@ func _physics_process(delta):
 			jump_turn = false
 			is_sliding = false
 			
-	if is_walljumping and !on_floor and on_wall and !is_jumping:
+	if is_walljumping and !on_floor and on_wall and !is_jumping: ## walljump
 		base_velocity.y = 0
 		if velocity.y > 0: added_velocity.y = 0
 		if get_timer("wall_jump").get('exists') == false:
 			create_timer("wall_jump", 20 * FPS_DELTA)
-			added_velocity.y -= 30 * FPS_DELTA
-			added_velocity.x = sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed * 2
+			added_velocity.y = clamp(added_velocity.y - 30 * FPS_DELTA, walljump_clamp[2], walljump_clamp[3])
+			added_velocity.x = clamp(sign(-wall_raycast.position.x + position.x) * FPS_DELTA * -jump_speed * 2, walljump_clamp[0], walljump_clamp[1])
 		
 		
 	#endregion }}}
 	
 	base_velocity.x = direction * WALK_SPEED
 	
-	#if is_walljumping and direction != sign(added_velocity.x) and direction != 0 and get_timer("wall_jump").get('exists'):
-		#base_velocity.x *= get_timer("wall_jump").get('percentage_passed') / 100
 	
 	if !on_floor:
 		base_velocity.y += gravity * FPS_DELTA
