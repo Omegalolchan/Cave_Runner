@@ -91,6 +91,8 @@ func run_command(command_line : String):
 			var _str : String = command_line 
 			_str = _str.erase(0, command_array[0].length() + 1)
 			Global.change_scene(_str)
+		'loadlevel':
+			get_node('/root/Node').load_level("res://assets/Scenes/Debug Scene.tscn")
 		'echo':
 			var _str : String = command_line 
 			_str = _str.erase(0, command_array[0].length() + 1)
@@ -116,11 +118,14 @@ func clear():
 func enable_disable_UI():
 	if on:
 		label_text = placeholder_text
-		Global.player.on = false
+
+		if Global.player != null:
+			Global.player.on = false
 		draw_on = true
 	else:
 		draw_on = false
-		Global.player.on = true
+		if Global.player != null:
+			Global.player.on = true
 		label_text = ""
 
 func run_external_script():
