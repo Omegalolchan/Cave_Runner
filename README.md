@@ -9,18 +9,10 @@ Cave Runner é um emocionante jogo de plataforma de precisão onde os jogadores 
 1. **Controles:**
    - Setas direcionais para mover o personagem.
    - Tecla 'C' para pular.
-   - Tecla 'S' para deslizar.
-   - (Adicione outros controles conforme necessário)
+   - Seta para baixo para deslizar.
 
 2. **Objetivo:**
-   - Navegue através dos níveis da caverna, superando obstáculos mortais.
    - Encontre a flor mágica para curar a avó de Chrystal e completar o jogo.
-
-**Recursos:**
-
-- Gráficos envolventes e atmosfera imersiva.
-- Múltiplos níveis com aumento de dificuldade.
-- Trilha sonora original que complementa a experiência do jogo.
 
 **Instalação:**
 
@@ -32,7 +24,3 @@ Cave Runner é um emocionante jogo de plataforma de precisão onde os jogadores 
 **Suporte:**
 
 - Para relatar bugs ou problemas técnicos, entre em contato conosco através do GitHub em [Repositório do Cave Runner](https://github.com/Omegalolchan/Cave_Runner) ou abra uma nova issue em [https://github.com/Omegalolchan/Cave_Runner/issues](https://github.com/Omegalolchan/Cave_Runner/issues).
-
-**Agradecimentos:**
-
-Agradecemos por jogar Cave Runner e esperamos que você desfrute desta emocionante aventura!
